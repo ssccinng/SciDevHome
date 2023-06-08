@@ -1,0 +1,33 @@
+syntax = "proto3";
+
+option csharp_namespace = "SciDevHome.Server";
+
+package DevHome;
+
+service Greeter {
+  // 客户端连接服务端 双向流
+  rpc Connect(stream ConnectRequest) returns (stream ConnectResponse) {}
+
+  rpc Register(ClientInfo) returns (RegisterResponse) {}
+}
+
+message RegisterResponse
+{
+	// 客户端id
+	string clientId = 1;
+}
+
+message ConnectRequest {
+  string Message = 1;
+  // 带入连接信息，如IP，名字等
+  ClientInfo Info = 2;
+}
+
+message ConnectResponse {
+  string message = 1;
+}
+
+message ClientInfo {
+  string IP = 1;
+  string Name = 2;
+}
