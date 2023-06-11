@@ -28,6 +28,10 @@ namespace DevHome.Client.Test
                         new
                         {
                             Message = Directory.GetDirectories("D:")
+                        }, new JsonSerializerOptions
+                        {
+                            Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+
                         }
                     ) }
                 );
