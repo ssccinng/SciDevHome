@@ -9,6 +9,14 @@ service Greeter {
   rpc Connect(stream ConnectRequest) returns (stream ConnectResponse) {}
 
   rpc Register(ClientInfo) returns (RegisterResponse) {}
+
+
+  rpc SendMessage(DevMessage) returns (DevMessage) {}
+}
+
+message DevMessage {
+	string type = 1;
+	string json = 2;
 }
 
 message RegisterResponse
@@ -18,9 +26,9 @@ message RegisterResponse
 }
 
 message ConnectRequest {
-  string Message = 1;
+  string message = 1;
   // 带入连接信息，如IP，名字等
-  ClientInfo Info = 2;
+  ClientInfo info = 2;
 }
 
 message ConnectResponse {
@@ -28,6 +36,7 @@ message ConnectResponse {
 }
 
 message ClientInfo {
-  string IP = 1;
-  string Name = 2;
+  string ip = 1;
+  string name = 2;
+  string mac = 3;
 }
