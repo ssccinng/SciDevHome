@@ -8,10 +8,12 @@ service Greeter {
   // 客户端连接服务端 双向流
   rpc Connect(stream ConnectRequest) returns (stream ConnectResponse) {}
 
+  // 客户端在服务端注册，并获得一个clientId
   rpc Register(ClientInfo) returns (RegisterResponse) {}
 
 
   rpc SendMessage(DevMessage) returns (DevMessage) {}
+  rpc SyncFolder(SyncFolderRequest) returns (SyncFolderResponse) {}
 }
 
 message DevMessage {
@@ -39,4 +41,23 @@ message ClientInfo {
   string ip = 1;
   string name = 2;
   string mac = 3;
+}
+
+
+message SyncFolderRequest {
+  string path = 1;
+}
+
+message SyncFolderResponse {
+  string path = 1;
+  repeated FileInfo files = 2;
+}
+
+message FileInfo {
+  string name = 1;
+  string path = 2;
+  string md5 = 3;
+  int64 size = 4;
+  int64 lastWriteTime = 5;
+  bool isDirectory = 6;
 }
