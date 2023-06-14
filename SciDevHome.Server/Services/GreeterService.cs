@@ -1,7 +1,9 @@
 using Grpc.Core;
 using MediatR;
+using SciDevHome.Message;
 using SciDevHome.Server;
 using SciDevHome.Server.Model;
+using System.Collections.Concurrent;
 using System.Text.Json;
 
 namespace SciDevHome.Server.Services
@@ -10,6 +12,9 @@ namespace SciDevHome.Server.Services
     {
         private readonly ILogger<GreeterService> _logger;
         private readonly DevHomeDb _devHomeDb;
+
+        // 可能亲求也需要标记
+        private static ConcurrentDictionary<string, IServerStreamWriter<ConnectResponse>> _keyValuePairs = new();
 
         public GreeterService(ILogger<GreeterService> logger, DevHomeDb devHomeDb)
         {
@@ -67,12 +72,31 @@ namespace SciDevHome.Server.Services
                 Json = request.Json,
             }); 
         }
+
+        public override Task<GetPathResponse> GetClientPath(GetPathRequest request, ServerCallContext context)
+        {
+            _keyValuePairs[request.ClientId].WriteAsync(new ConnectResponse
+            {
+                Cmd = "getPathInfo",
+                Data = JsonSerializer.Serialize(new GetPathRequestMessage
+                {
+                    Path = request.Path,
+                })
+            });
+
+            return Task.FromResult(new GetPathResponse { Path = request.Path });
+        }
+
         public override async Task Connect(IAsyncStreamReader<ConnectRequest> requestStream, IServerStreamWriter<ConnectResponse> responseStream, ServerCallContext context)
         {
             // 管理所有连接，当连接断开时，从列表中移除
             // 通过 context.CancellationToken.IsCancellationRequested 判断连接是否断开
 
             Guid id = Guid.NewGuid();
+            if (!_keyValuePairs.ContainsKey(" "))
+            {
+                _keyValuePairs.TryAdd(" ", responseStream);
+            }
             _logger.LogInformation($"New connection: {id}");
             try
             {
@@ -83,9 +107,11 @@ namespace SciDevHome.Server.Services
                     if (requestStream.MoveNext().Result)
                     {
                         var request = requestStream.Current;
-                       
-                        await responseStream.WriteAsync(new ConnectResponse { Message = $"Hello {request.Info}" });
+                        GrpcMessageHandler.ClientConnectMessageHandler(responseStream, request);
+                        // 等待接受一条初始化信息
+                        //await responseStream.WriteAsync(new ConnectResponse { Message = $"Hello {request.Info}" });
                     }
+                    //await Task.Delay(1000, context.CancellationToken);
                 }
             }
             catch (OperationCanceledException ex)

@@ -1,4 +1,5 @@
-﻿using Grpc.Net.Client;
+﻿using Grpc.Core;
+using Grpc.Net.Client;
 using SciDevHome;
 using System.Formats.Asn1;
 using System.Text.Json;
@@ -16,10 +17,18 @@ namespace DevHome.Client.Test
             await channel.ConnectAsync();
 
             var client = new SciDevHome.Server.Greeter.GreeterClient(channel);
-            await client.RegisterAsync(new SciDevHome.Server.ClientInfo { Ip = "dabu", Name = "aa" });
 
+
+            if (saves.ClientId == string.Empty)
+            {
+                var regRes = await client.RegisterAsync(new SciDevHome.Server.ClientInfo { Ip = "dabu", Name = "aa" });
+                saves.ClientId = regRes.ClientId;
+                await SaveFileManager.SaveAsync("devhomeSetting.json", saves);
+            }
+
+            // 检测本地有没有
             var stream =  client.Connect();
-
+            new Thread(() => { ListenServer(stream); }).Start();
             await client.SendMessageAsync(
                 new SciDevHome.Server.DevMessage { 
                     
@@ -35,7 +44,37 @@ namespace DevHome.Client.Test
                         }
                     ) }
                 );
+            while (true)
+            {
+                var path =
             Console.ReadLine();
+                await client.GetClientPathAsync(new SciDevHome.Server.GetPathRequest { ClientId = " ", Path = path });
+            }
+        }
+
+        public static async void ListenServer(Grpc.Core.AsyncDuplexStreamingCall<SciDevHome.Server.ConnectRequest, SciDevHome.Server.ConnectResponse> stream)
+        {
+            while (true)
+            {
+                try
+                {
+                    if (stream.ResponseStream.MoveNext().Result)
+                    {
+                        var response = stream.ResponseStream.Current;
+
+                        await GrpcMessageHandler.ServerMessageHander(stream.RequestStream, response);
+                        //new getpa
+                        // 等待接受一条初始化信息
+                        //await responseStream.WriteAsync(new ConnectResponse { Message = $"Hello {request.Info}" });
+                    }
+                    
+                }
+                catch (Exception)
+                {
+
+                    throw;
+                }
+            }
         }
     }
 
