@@ -21,6 +21,15 @@ service Greeter {
   // 获取某个客户端的路径信息
   rpc GetClientPath(GetPathRequest) returns (GetPathResponse) {}
 
+  // 获取所有客户端信息
+  rpc GetClients(GetClientsRequest) returns (GetClientsResponse) {}
+
+  // 上传文件
+  rpc UploadFile(stream UploadFileRequest) returns (UploadFileResponse) {}
+
+  // 下载文件
+  rpc DownloadFile(DownloadFileRequest) returns (stream DownloadFileResponse) {}
+
 
   
 }
@@ -95,3 +104,41 @@ message SyncPathResponse {
   repeated GrpcFileInfo files = 2;
 }
 
+
+message GetClientsRequest {
+}
+
+message GetClientsResponse {
+  repeated ClientInfo clients = 1;
+}
+
+message UploadFileRequest {
+  string clientId = 1;
+  string path = 2;
+  string name = 3;
+  int64 size = 4;
+  int64 lastWriteTime = 5;
+  bytes data = 6;
+}
+
+message UploadFileResponse {
+  string path = 1;
+  string name = 2;
+  int64 size = 3;
+  int64 lastWriteTime = 4;
+  bytes data = 5;
+}
+
+message DownloadFileRequest {
+  string clientId = 1;
+  string path = 2;
+  string name = 3;
+}
+
+message DownloadFileResponse {
+  string path = 1;
+  string name = 2;
+  int64 size = 3;
+  int64 lastWriteTime = 4;
+  bytes data = 5;
+}

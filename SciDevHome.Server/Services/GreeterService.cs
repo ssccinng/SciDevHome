@@ -38,6 +38,7 @@ namespace SciDevHome.Server.Services
 
         public override Task<RegisterResponse> Register(ClientInfo request, ServerCallContext context)
         {
+            // 查证一下
             var user = new User
             {
                 ClientId = Random.Shared.Next(100_000_000_0).ToString(),
@@ -87,12 +88,17 @@ namespace SciDevHome.Server.Services
             return Task.FromResult(new GetPathResponse { Path = request.Path });
         }
 
+        
+
         public override async Task Connect(IAsyncStreamReader<ConnectRequest> requestStream, IServerStreamWriter<ConnectResponse> responseStream, ServerCallContext context)
         {
             // 管理所有连接，当连接断开时，从列表中移除
             // 通过 context.CancellationToken.IsCancellationRequested 判断连接是否断开
 
+            // 连接id
             Guid id = Guid.NewGuid();
+
+            // 注册代码
             if (!_keyValuePairs.ContainsKey(" "))
             {
                 _keyValuePairs.TryAdd(" ", responseStream);
