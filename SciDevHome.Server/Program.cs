@@ -17,12 +17,18 @@ namespace SciDevHome.Server
             builder.Services.AddDbContext<DevHomeDb>(options =>
                 options.UseSqlite(connectionString));
 
+            #region 服务
+            builder.Services.AddSingleton<DevHomeService>();
+            #endregion
+
+
             var app = builder.Build();
             // Configure the HTTP request pipeline.
             app.MapGrpcService<GreeterService>();
 
             //new DevHomeDb().Database.Migrate();
-
+            
+            // 迁移数据库
             using var scope = app.Services.CreateScope();
             var dbContext = scope.ServiceProvider.GetService<DevHomeDb>();
             dbContext.Database.Migrate();

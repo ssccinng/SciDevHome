@@ -61,6 +61,7 @@ message ClientInfo {
   string ip = 1;
   string name = 2;
   string mac = 3;
+  string clientId = 4;
 }
 
 
@@ -114,11 +115,12 @@ message GetClientsResponse {
 
 message UploadFileRequest {
   string clientId = 1;
-  string path = 2;
-  string name = 3;
-  int64 size = 4;
-  int64 lastWriteTime = 5;
-  bytes data = 6;
+  string file_group = 2;
+  string path = 3;
+  string name = 4;
+  int64 size = 5;
+  int64 lastWriteTime = 7;
+  bytes data = 8;
 }
 
 message UploadFileResponse {

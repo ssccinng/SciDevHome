@@ -2,6 +2,7 @@ using Grpc.Core;
 using MediatR;
 using SciDevHome.Message;
 using SciDevHome.Server;
+using SciDevHome.Server.Mediator.Command;
 using SciDevHome.Server.Model;
 using System.Collections.Concurrent;
 using System.Text.Json;
@@ -12,14 +13,15 @@ namespace SciDevHome.Server.Services
     {
         private readonly ILogger<GreeterService> _logger;
         private readonly DevHomeDb _devHomeDb;
+        private readonly IMediator _mediator;
 
         // 可能亲求也需要标记
-        private static ConcurrentDictionary<string, IServerStreamWriter<ConnectResponse>> _keyValuePairs = new();
 
-        public GreeterService(ILogger<GreeterService> logger, DevHomeDb devHomeDb)
+        public GreeterService(ILogger<GreeterService> logger, DevHomeDb devHomeDb, IMediator mediator)
         {
             _logger = logger;
             _devHomeDb = devHomeDb;
+            _mediator = mediator;
         }
         private string GetClientIpAddress(ServerCallContext context)
         {
@@ -35,6 +37,7 @@ namespace SciDevHome.Server.Services
                 return context.Peer;
             }
         }
+
 
         public override Task<RegisterResponse> Register(ClientInfo request, ServerCallContext context)
         {
@@ -76,19 +79,33 @@ namespace SciDevHome.Server.Services
 
         public override Task<GetPathResponse> GetClientPath(GetPathRequest request, ServerCallContext context)
         {
-            _keyValuePairs[request.ClientId].WriteAsync(new ConnectResponse
-            {
-                Cmd = "getPathInfo",
-                Data = JsonSerializer.Serialize(new GetPathRequestMessage
-                {
-                    Path = request.Path,
-                })
-            });
+            //_clientDict[request.ClientId].WriteAsync(new ConnectResponse
+            //{
+            //    Cmd = "getPathInfo",
+            //    Data = JsonSerializer.Serialize(new GetPathRequestMessage
+            //    { 
+            //        Path = request.Path,
+            //    })
+            //});
 
             return Task.FromResult(new GetPathResponse { Path = request.Path });
         }
 
-        
+        public override Task<GetClientsResponse> GetClients(GetClientsRequest request, ServerCallContext context)
+        {
+            var res = new GetClientsResponse();
+
+            //foreach (var client in _clientDict)
+            //{
+            //    res.Clients.Add(new ClientInfo
+            //    {
+            //        ClientId = client.Key
+            //    });
+            //}
+
+            return Task.FromResult(res);
+        }
+
 
         public override async Task Connect(IAsyncStreamReader<ConnectRequest> requestStream, IServerStreamWriter<ConnectResponse> responseStream, ServerCallContext context)
         {
@@ -99,10 +116,10 @@ namespace SciDevHome.Server.Services
             Guid id = Guid.NewGuid();
 
             // 注册代码
-            if (!_keyValuePairs.ContainsKey(" "))
-            {
-                _keyValuePairs.TryAdd(" ", responseStream);
-            }
+            //if (!_clientDict.ContainsKey(" "))
+            //{
+            //    _clientDict.TryAdd(" ", responseStream);
+            //}
             _logger.LogInformation($"New connection: {id}");
             try
             {
@@ -113,7 +130,11 @@ namespace SciDevHome.Server.Services
                     if (requestStream.MoveNext().Result)
                     {
                         var request = requestStream.Current;
+                        await _mediator.Send(new ConnectMessageCommand(request, responseStream));
                         GrpcMessageHandler.ClientConnectMessageHandler(responseStream, request);
+
+                        // 收到init信息之后才能知晓？
+
                         // 等待接受一条初始化信息
                         //await responseStream.WriteAsync(new ConnectResponse { Message = $"Hello {request.Info}" });
                     }
@@ -126,6 +147,28 @@ namespace SciDevHome.Server.Services
             }
             
 
+        }
+        public override Task DownloadFile(DownloadFileRequest request, IServerStreamWriter<DownloadFileResponse> responseStream, ServerCallContext context)
+        {
+            return base.DownloadFile(request, responseStream, context);
+        }
+        /// <summary>
+        /// 客户端上传文件至客户端
+        /// </summary>
+        /// <param name="requestStream"></param>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        public override async Task<UploadFileResponse> UploadFile(IAsyncStreamReader<UploadFileRequest> requestStream, ServerCallContext context)
+        {
+            await foreach (var item in requestStream.ReadAllAsync())
+            {
+                //Console.WriteLine(item.FileName);
+                //Console.WriteLine(item.FileSize);
+                //Console.WriteLine(item.FilePath);
+                //Console.WriteLine(item.FileData);
+            }
+            throw new NotImplementedException();
+            
         }
     }
 }

@@ -1,0 +1,10 @@
+﻿{
+    "profiles": {
+      "SciDevHome.Client.WinUI (Package)": {
+        "commandName": "MsixPackage"
+      },
+      "SciDevHome.Client.WinUI (Unpackaged)": {
+        "commandName": "Project"
+      }
+    }
+}

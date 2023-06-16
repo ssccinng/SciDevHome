@@ -14,6 +14,9 @@ namespace SciDevHome.Server.Services
             //}));
             switch (request.Cmd)
             {
+                case "init":
+                    // 初始化
+                    break;
                 case "pathInfo":
                     Console.WriteLine("pathInfo");
                     var daa = JsonSerializer.Deserialize<GrpcDirctoryInfo[]>(request.Data);
