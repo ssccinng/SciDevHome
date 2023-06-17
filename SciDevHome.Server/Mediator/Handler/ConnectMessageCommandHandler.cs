@@ -16,7 +16,18 @@ public class ConnectMessageCommandHandler : IRequestHandler<ConnectMessageComman
     }
     public Task Handle(ConnectMessageCommand request, CancellationToken cancellationToken)
     {
-
+        switch (request.request.Cmd)
+        {
+            case "InitClient":
+                _devHomeService.UpdateClientId(request.connectId);
+                break;
+            case "GetPathInfo":
+                break;
+            case "":
+                break;
+            default:
+                break;
+        }
         return Task.CompletedTask;
     }
 }

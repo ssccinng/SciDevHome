@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using SciDevHome.Server.Mediator.Event;
 using SciDevHome.Server.Services;
 
 namespace SciDevHome.Server.Mediator.Handler;
@@ -15,6 +16,8 @@ public class ConnectStartEventHandler : IRequestHandler<ConnectStartEvent>
     }
     public Task Handle(ConnectStartEvent request, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        _devHomeService.AddConnect(request.ClientConnectInfo);
+
+        return Task.CompletedTask;
     }
 }

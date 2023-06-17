@@ -58,7 +58,7 @@ namespace SciDevHome.Server.Services
 
             return Task.FromResult(new RegisterResponse
             {
-                 ClientId = user.ClientId,
+                ClientId = user.ClientId,
             });
         }
 
@@ -69,15 +69,15 @@ namespace SciDevHome.Server.Services
             var aa = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(request.Json);
             foreach (var item in aa)
             {
-                Console.WriteLine(  item.Key);
-                Console.WriteLine(  item.Value.GetRawText());
+                Console.WriteLine(item.Key);
+                Console.WriteLine(item.Value.GetRawText());
             }
 
             return Task.FromResult(new DevMessage
             {
                 Type = "临流揽镜夜双魂",
                 Json = request.Json,
-            }); 
+            });
         }
 
         public override Task<GetPathResponse> GetClientPath(GetPathRequest request, ServerCallContext context)
@@ -125,9 +125,13 @@ namespace SciDevHome.Server.Services
             //Metadata headers = context.req
 
             // 生成id
-            Guid connectionId = Guid.NewGuid();
+            var connectionId = Guid.NewGuid().ToString();
 
-            var cinfo = new ClientConnectInfo { ServerStreamWriter = responseStream, ConnectId = connectionId.ToString() };
+            var cinfo = new ClientConnectInfo
+            {
+                ServerStreamWriter = responseStream,
+                ConnectId = connectionId
+            };
 
             // 初始化本次连接
             await _mediator.Send(new ConnectStartEvent(cinfo));
@@ -151,7 +155,9 @@ namespace SciDevHome.Server.Services
                     if (requestStream.MoveNext().Result)
                     {
                         var request = requestStream.Current;
-                        await _mediator.Send(new ConnectMessageCommand(request, responseStream));
+                        await _mediator.Send(new ConnectMessageCommand(request, connectionId));
+
+
                         //GrpcMessageHandler.ClientConnectMessageHandler(responseStream, request);
 
                         // 收到init信息之后才能知晓？
@@ -166,7 +172,7 @@ namespace SciDevHome.Server.Services
             {
                 _logger.LogInformation($"connection: {connectionId} disconnect {ex.Message}");
             }
-            
+
 
         }
 
@@ -198,7 +204,7 @@ namespace SciDevHome.Server.Services
                 //Console.WriteLine(item.FileData);
             }
             throw new NotImplementedException();
-            
+
         }
     }
 }
