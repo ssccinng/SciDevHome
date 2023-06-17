@@ -26,8 +26,4 @@
     <ProjectReference Include="..\SciDevHome\SciDevHome.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Mediator\Behaviors\" />
-  </ItemGroup>
-
 </Project>
