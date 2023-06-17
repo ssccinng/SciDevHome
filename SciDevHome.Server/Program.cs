@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using SciDevHome.Server.Model;
 using SciDevHome.Server.Services;
 
@@ -18,6 +19,10 @@ namespace SciDevHome.Server
                 options.UseSqlite(connectionString));
 
             #region 服务
+            builder.Services.AddMediatR(config =>
+            {
+                config.RegisterServicesFromAssemblyContaining<ServerEntryPoint>();
+            });
             builder.Services.AddSingleton<DevHomeService>();
             #endregion
 

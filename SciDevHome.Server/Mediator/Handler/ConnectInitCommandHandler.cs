@@ -14,7 +14,7 @@ public class ConnectInitCommandHandler : IRequestHandler<ConnectInitCommand>
     }
     public Task Handle(ConnectInitCommand request, CancellationToken cancellationToken)
     {
-        _devHomeService.AddConnect(request);
+        //_devHomeService.AddConnect(request);
         return Task.CompletedTask;
     }
 }

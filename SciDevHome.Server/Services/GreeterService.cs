@@ -3,6 +3,8 @@ using MediatR;
 using SciDevHome.Message;
 using SciDevHome.Server;
 using SciDevHome.Server.Mediator.Command;
+using SciDevHome.Server.Mediator.Event;
+using SciDevHome.Server.Mediator.Queries;
 using SciDevHome.Server.Model;
 using System.Collections.Concurrent;
 using System.Text.Json;
@@ -44,6 +46,7 @@ namespace SciDevHome.Server.Services
             // 查证一下
             var user = new User
             {
+                // 这个地方 要查验数据库确保两者id不同！或是直接guid?
                 ClientId = Random.Shared.Next(100_000_000_0).ToString(),
                 UserName = "Test User",
                 Password = "password",
@@ -90,39 +93,57 @@ namespace SciDevHome.Server.Services
 
             return Task.FromResult(new GetPathResponse { Path = request.Path });
         }
-
-        public override Task<GetClientsResponse> GetClients(GetClientsRequest request, ServerCallContext context)
+        /// <summary>
+        /// 获取所有在线客户端， // 客户端本地也需缓存
+        /// </summary>
+        /// <param name="request"></param>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        public async override Task<GetClientsResponse> GetClients(GetClientsRequest request, ServerCallContext context)
         {
             var res = new GetClientsResponse();
+            var clients = await _mediator.Send(new GetClientQuery()); ;
+            res.Clients.AddRange(clients);
 
-            //foreach (var client in _clientDict)
-            //{
-            //    res.Clients.Add(new ClientInfo
-            //    {
-            //        ClientId = client.Key
-            //    });
-            //}
-
-            return Task.FromResult(res);
+            return res;
         }
 
-
+        /// <summary>
+        /// 连接
+        /// </summary>
+        /// <param name="requestStream"></param>
+        /// <param name="responseStream"></param>
+        /// <param name="context"></param>
+        /// <returns></returns>
         public override async Task Connect(IAsyncStreamReader<ConnectRequest> requestStream, IServerStreamWriter<ConnectResponse> responseStream, ServerCallContext context)
         {
-            // 管理所有连接，当连接断开时，从列表中移除
+            // 管理所有连接，当连接断开时，从列表中移除 ConnectInitCommand
             // 通过 context.CancellationToken.IsCancellationRequested 判断连接是否断开
 
             // 连接id
-            Guid id = Guid.NewGuid();
 
+            //Metadata headers = context.req
+
+            // 生成id
+            Guid connectionId = Guid.NewGuid();
+
+            var cinfo = new ClientConnectInfo { ServerStreamWriter = responseStream, ConnectId = connectionId.ToString() };
+
+            // 初始化本次连接
+            await _mediator.Send(new ConnectStartEvent(cinfo));
+            // Todo: 还需要重连代码desuwa
+
+
+            //context.
             // 注册代码
             //if (!_clientDict.ContainsKey(" "))
             //{
             //    _clientDict.TryAdd(" ", responseStream);
             //}
-            _logger.LogInformation($"New connection: {id}");
+            _logger.LogInformation($"New connection: {connectionId}");
             try
             {
+
                 _logger.LogInformation($"Message from {GetClientIpAddress(context)}");
                 while (!context.CancellationToken.IsCancellationRequested)
                 {
@@ -131,7 +152,7 @@ namespace SciDevHome.Server.Services
                     {
                         var request = requestStream.Current;
                         await _mediator.Send(new ConnectMessageCommand(request, responseStream));
-                        GrpcMessageHandler.ClientConnectMessageHandler(responseStream, request);
+                        //GrpcMessageHandler.ClientConnectMessageHandler(responseStream, request);
 
                         // 收到init信息之后才能知晓？
 
@@ -143,17 +164,25 @@ namespace SciDevHome.Server.Services
             }
             catch (OperationCanceledException ex)
             {
-                _logger.LogInformation($"connection: {id} disconnect {ex.Message}");
+                _logger.LogInformation($"connection: {connectionId} disconnect {ex.Message}");
             }
             
 
         }
+
+        /// <summary>
+        /// 从服务端下载文件
+        /// </summary>
+        /// <param name="request"></param>
+        /// <param name="responseStream"></param>
+        /// <param name="context"></param>
+        /// <returns></returns>
         public override Task DownloadFile(DownloadFileRequest request, IServerStreamWriter<DownloadFileResponse> responseStream, ServerCallContext context)
         {
             return base.DownloadFile(request, responseStream, context);
         }
         /// <summary>
-        /// 客户端上传文件至客户端
+        /// 客户端上传文件至服务端
         /// </summary>
         /// <param name="requestStream"></param>
         /// <param name="context"></param>
@@ -162,6 +191,7 @@ namespace SciDevHome.Server.Services
         {
             await foreach (var item in requestStream.ReadAllAsync())
             {
+                //await _mediator.Send(new UpdateFileCommand(item));
                 //Console.WriteLine(item.FileName);
                 //Console.WriteLine(item.FileSize);
                 //Console.WriteLine(item.FilePath);
