@@ -15,22 +15,31 @@ public class DevHomeService
     /// 客户端对应的流表，是否封装一下会更好
     /// </summary>
     public ConcurrentDictionary<string, ClientConnectInfo> ClientDict = new();
+    public ILogger<DevHomeDB> _logger;
     public DevHomeService(IMediator mediator, DevHomeDB devHomeDB, ILogger<DevHomeDB> logger)
     {
         _mediator = mediator;
         _devHomeDB = devHomeDB;
+        _logger = logger;
     }
 
-
+    // 加入一个连接
     public void AddConnect(ClientConnectInfo clientConnectInfo)
     {
         // Todo: 判断一下, 不允许已经有的再次进入
         ClientDict.TryAdd(clientConnectInfo.ConnectId, clientConnectInfo);
     }
 
-    internal void UpdateClientId(string connectId)
+    internal void UpdateClientId(string connectId, string clientId)
     {
-        throw new NotImplementedException();
+        if (ClientDict.TryGetValue(connectId, out var clientConnectInfo))
+        {
+            clientConnectInfo.ClientId = clientId;
+        }
+        else 
+        {
+            _logger.LogError($"UpdateClientId: 未找到connectId: {connectId}");
+        }
     }
 }
 

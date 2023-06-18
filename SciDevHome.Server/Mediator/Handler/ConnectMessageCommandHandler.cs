@@ -1,4 +1,6 @@
-﻿using MediatR;
+﻿using System.Text.Json;
+using MediatR;
+using SciDevHome.Message;
 using SciDevHome.Server.Mediator.Command;
 using SciDevHome.Server.Services;
 
@@ -19,7 +21,9 @@ public class ConnectMessageCommandHandler : IRequestHandler<ConnectMessageComman
         switch (request.request.Cmd)
         {
             case "InitClient":
-                _devHomeService.UpdateClientId(request.connectId);
+                // 序列化
+                var initClientData = JsonSerializer.Deserialize<ClientIdUpdateMessage>(request.request.Data);
+                _devHomeService.UpdateClientId(request.connectId, initClientData.ClientId);
                 break;
             case "GetPathInfo":
                 break;
