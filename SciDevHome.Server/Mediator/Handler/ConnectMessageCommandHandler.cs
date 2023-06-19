@@ -22,7 +22,9 @@ public class ConnectMessageCommandHandler : IRequestHandler<ConnectMessageComman
         switch (request.request.Cmd)
         {
             case "InitClient":
-                _devHomeService.UpdateClientId(request.connectId, JsonSerializer.Deserialize<ClientIdUpdateMessage>(request.request.Data));
+                // 序列化
+                var initClientData = JsonSerializer.Deserialize<ClientIdUpdateMessage>(request.request.Data);
+                _devHomeService.UpdateClientId(request.connectId, initClientData.ClientId);
                 break;
             case "GetPathInfo":
                 break;
