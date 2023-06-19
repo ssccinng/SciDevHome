@@ -1,4 +1,6 @@
-﻿using MediatR;
+﻿using System.Text.Json;
+using MediatR;
+using SciDevHome.Message;
 using SciDevHome.Server.Mediator.Command;
 using SciDevHome.Server.Services;
 
@@ -16,10 +18,11 @@ public class ConnectMessageCommandHandler : IRequestHandler<ConnectMessageComman
     }
     public Task Handle(ConnectMessageCommand request, CancellationToken cancellationToken)
     {
+        
         switch (request.request.Cmd)
         {
             case "InitClient":
-                _devHomeService.UpdateClientId(request.connectId);
+                _devHomeService.UpdateClientId(request.connectId, JsonSerializer.Deserialize<ClientIdUpdateMessage>(request.request.Data));
                 break;
             case "GetPathInfo":
                 break;

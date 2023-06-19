@@ -10,6 +10,7 @@ public class DevHomeService
 {
     private readonly IMediator _mediator;
     private readonly DevHomeDB _devHomeDB;
+    private readonly ILogger<DevHomeDB> _logger;
 
     /// <summary>
     /// 客户端对应的流表，是否封装一下会更好
@@ -19,18 +20,24 @@ public class DevHomeService
     {
         _mediator = mediator;
         _devHomeDB = devHomeDB;
+        _logger = logger;
     }
 
 
     public void AddConnect(ClientConnectInfo clientConnectInfo)
     {
         // Todo: 判断一下, 不允许已经有的再次进入
+        if (ClientDict.ContainsKey(clientConnectInfo.ConnectId))
+        {
+            _logger.LogWarning("{ID} 已注册", clientConnectInfo.ConnectId);
+            return;
+        }
         ClientDict.TryAdd(clientConnectInfo.ConnectId, clientConnectInfo);
     }
 
-    internal void UpdateClientId(string connectId)
+    internal void UpdateClientId(string connectId, Message.ClientIdUpdateMessage? clientIdUpdateMessage)
     {
-        throw new NotImplementedException();
+        
     }
 }
 
