@@ -48,11 +48,12 @@ public class DevHomeService
         //ClientDict.TryRemove();
     }
 
-    internal void UpdateClientId(string connectId, string clientId)
+    internal void UpdateClientId(string connectId, string clientId, string name)
     {
         if (ClientDict.TryGetValue(connectId, out var clientConnectInfo))
         {
             clientConnectInfo.ClientId = clientId;
+            clientConnectInfo.Name = name;
         }
         else 
         {
@@ -63,7 +64,7 @@ public class DevHomeService
 
 
 /// <summary>
-/// 客户端连接信息
+/// 客户端连接信息 // 并撕烤需不需要持久化
 /// </summary>
 public class ClientConnectInfo
 {
@@ -89,6 +90,11 @@ public class ClientConnectInfo
     {
         get; set;
     }
+    public string Name
+    {
+        get;
+        set;
+    } = string.Empty;
 
     //public
 

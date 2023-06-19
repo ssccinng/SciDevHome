@@ -15,6 +15,11 @@ public class ClientIdUpdateMessage
     /// </summary>
     public string ClientId
     {
-        get;set;
+        get; set;
+    }
+
+    public string Name
+    {
+        get; set;
     }
 }

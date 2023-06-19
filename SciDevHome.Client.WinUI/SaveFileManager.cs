@@ -1,23 +1,28 @@
 ﻿using System.Text.Json;
+using Windows.Storage;
+
 namespace SciDevHome.Utils
 {
     public class SaveFileManager
     {
+       static  Windows.Storage.StorageFolder localFolder =
+    Windows.Storage.ApplicationData.Current.LocalFolder;
         public static async Task SaveAsync(string fileName, DevHomeClientSave devHomeClientSave)
         {
-            //fileName = AppDomain.CurrentDomain.BaseDirectory + fileName;
+            StorageFile sampleFile = await localFolder.CreateFileAsync(fileName, CreationCollisionOption.OpenIfExists);
 
-            await File.WriteAllTextAsync(fileName, JsonSerializer.Serialize(devHomeClientSave));
+            await FileIO.WriteTextAsync(sampleFile, JsonSerializer.Serialize(devHomeClientSave));
         }
 
         public static async Task<DevHomeClientSave> LoadAsync(string fileName)
         {
 
-            //fileName = Environment. + fileName;
+            StorageFile sampleFile = await localFolder.CreateFileAsync(fileName,
+      CreationCollisionOption.OpenIfExists);
+
             try
             {
-
-                var json = File.ReadAllText(fileName);
+                var json = await FileIO.ReadTextAsync(sampleFile);
                 return JsonSerializer.Deserialize<DevHomeClientSave>(json);
 
             }
@@ -25,6 +30,7 @@ namespace SciDevHome.Utils
             {
 
                 var res = new DevHomeClientSave();
+
                 await SaveAsync(fileName, res);
                 return res;
             }

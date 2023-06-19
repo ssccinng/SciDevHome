@@ -26,7 +26,7 @@ public class ConnectMessageCommandHandler : IRequestHandler<ConnectMessageComman
             case "InitClient":
                 // 序列化
                 var initClientData = JsonSerializer.Deserialize<ClientIdUpdateMessage>(request.request.Data);
-                _devHomeService.UpdateClientId(request.connectId, initClientData.ClientId);
+                _devHomeService.UpdateClientId(request.connectId, initClientData.ClientId, initClientData.Name);
                 break;
             case "GetPathInfo":
                 break;

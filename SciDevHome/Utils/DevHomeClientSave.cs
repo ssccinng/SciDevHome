@@ -10,5 +10,10 @@
         /// 客户端Id
         /// </summary>
         public string ClientId { get; set; } = string.Empty;
+        public string ComputerName
+        {
+            get;
+            set;
+        } = string.Empty;
     }
 }

@@ -18,7 +18,6 @@ public partial class MainViewModel : ObservableRecipient
         _grpcClientFactory = grpcClientFactory;
         Client = grpcClientFactory.CreateClient<Greeter.GreeterClient>("test");
         // 思考用在其他地方
-        Saves = SaveFileManager.LoadAsync("devhomeSetting.json").Result;
 
         //Init().Wait();
     }

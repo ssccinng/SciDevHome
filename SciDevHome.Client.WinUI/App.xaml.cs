@@ -88,11 +88,13 @@ public partial class App : Application
             services.AddTransient<ShellPage>();
             services.AddTransient<ShellViewModel>();
 
+            // 读取文件
 
             services.AddGrpcClient<Greeter.GreeterClient>("test", options =>
             {
                 // 需要读取配置， 但这样只能单例
-                options.Address = new Uri("http://172.168.35.77:45152");
+                //options.Address = new Uri("http://172.168.35.77:45152");
+                options.Address = new Uri("http://127.0.0.1:45152");
             });
 
             // Configuration

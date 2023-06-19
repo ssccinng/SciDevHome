@@ -3,6 +3,7 @@ using System.Text.Json;
 
 namespace SciDevHome.Server.Services
 {
+    [Obsolete]
     public static class GrpcMessageHandler
     {
         public static void ClientConnectMessageHandler(Grpc.Core.IServerStreamWriter<ConnectResponse> responseStream, ConnectRequest request)
