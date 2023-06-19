@@ -44,6 +44,7 @@ namespace SciDevHome.Server.Services
         public override Task<RegisterResponse> Register(ClientInfo request, ServerCallContext context)
         {
             // 查证一下
+            // 也许需要指令化
             var user = new User
             {
                 // 这个地方 要查验数据库确保两者id不同！或是直接guid?
@@ -167,10 +168,18 @@ namespace SciDevHome.Server.Services
                     }
                     //await Task.Delay(1000, context.CancellationToken);
                 }
+
             }
             catch (OperationCanceledException ex)
             {
                 _logger.LogInformation($"connection: {connectionId} disconnect {ex.Message}");
+                // 移除此连接
+
+            }
+            finally
+            {
+                await _mediator.Send(new ConnectEndEvent(cinfo));
+
             }
 
 

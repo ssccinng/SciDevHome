@@ -9,7 +9,7 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace DevHome.Client.Test
+namespace SciDevHome.Utils
 {
     public static class GrpcMessageHandler
     {
@@ -22,21 +22,21 @@ namespace DevHome.Client.Test
                     // yes need 模块化
                     var getpm = JsonSerializer.Deserialize<GetPathRequestMessage>(response.Data);
                     // 为空判断
-                    DirectoryInfo directory = new DirectoryInfo(getpm.Path);
+                    var directory = new DirectoryInfo(getpm.Path);
 
 
                     var files = directory.GetFiles();
                     var dirs = directory.GetDirectories();
-                    List<GrpcDirctoryInfo> list = new ();
+                    List<GrpcDirctoryInfo> list = new();
 
-                    foreach (FileInfo file in files)
+                    foreach (var file in files)
                     {
                         list.Add(new GrpcDirctoryInfo() { Path = file.FullName, IsDirectory = false, LastWriteTime = file.LastWriteTime });
                     }
 
                     foreach (var dir in dirs)
                     {
-                        list.Add(new GrpcDirctoryInfo() { LastWriteTime = dir.LastWriteTime, Path = dir.FullName, IsDirectory = true  });
+                        list.Add(new GrpcDirctoryInfo() { LastWriteTime = dir.LastWriteTime, Path = dir.FullName, IsDirectory = true });
                     }
 
                     await requestStream.WriteAsync(new ConnectRequest { Cmd = "pathInfo", Data = JsonSerializer.Serialize(list) });

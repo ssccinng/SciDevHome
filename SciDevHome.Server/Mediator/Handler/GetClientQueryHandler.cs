@@ -18,6 +18,6 @@ public class GetClientQueryHandler : IRequestHandler<GetClientQuery, IEnumerable
     }
     public Task<IEnumerable<ClientInfo>> Handle(GetClientQuery request, CancellationToken cancellationToken)
     {
-        return Task.FromResult(_devHomeService.ClientDict.Select(s => new ClientInfo { ClientId = s.Key }));
+        return Task.FromResult(_devHomeService.ClientDict.Select(s => new ClientInfo { ClientId = s.Value.ClientId }));
     }
 }

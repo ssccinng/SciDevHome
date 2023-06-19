@@ -13,6 +13,15 @@
 	<Nullable>enable</Nullable>
 	<UseWinUI>true</UseWinUI>
     <EnableMsixTooling>true</EnableMsixTooling>
+    <GenerateAppInstallerFile>True</GenerateAppInstallerFile>
+    <AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
+    <PackageCertificateThumbprint>A328867B2D2E5917CCB2FAC02C7C33DE117DC8C6</PackageCertificateThumbprint>
+    <AppxPackageSigningTimestampDigestAlgorithm>SHA256</AppxPackageSigningTimestampDigestAlgorithm>
+    <AppxAutoIncrementPackageRevision>True</AppxAutoIncrementPackageRevision>
+    <AppxSymbolPackageEnabled>False</AppxSymbolPackageEnabled>
+    <GenerateTestArtifacts>True</GenerateTestArtifacts>
+    <AppxBundle>Never</AppxBundle>
+    <AppInstallerUri>D:/Scixing</AppInstallerUri>
   </PropertyGroup>
 
   <ItemGroup>
@@ -38,12 +47,6 @@
   <ItemGroup>
     <ProjectReference Include="..\SciDevHome.Client.WinUI.Core\SciDevHome.Client.WinUI.Core.csproj" />
     <ProjectReference Include="..\SciDevHome\SciDevHome.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Protobuf Include="..\SciDevHome.Server\Protos\greet.proto" GrpcServices="Client">
-      <Link>Protos\greet.proto</Link>
-    </Protobuf>
   </ItemGroup>
   <ItemGroup>
     <None Update="appsettings.json">

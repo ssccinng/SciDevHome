@@ -5,7 +5,9 @@ using SciDevHome.Server.Mediator.Command;
 using SciDevHome.Server.Services;
 
 namespace SciDevHome.Server.Mediator.Handler;
-
+/// <summary>
+/// 连接信息
+/// </summary>
 public class ConnectMessageCommandHandler : IRequestHandler<ConnectMessageCommand>
 {
     private readonly DevHomeService _devHomeService;

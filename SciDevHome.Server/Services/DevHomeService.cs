@@ -16,11 +16,10 @@ public class DevHomeService
     /// 客户端对应的流表，是否封装一下会更好
     /// </summary>
     public ConcurrentDictionary<string, ClientConnectInfo> ClientDict = new();
-    public ILogger<DevHomeDB> _logger;
-    public DevHomeService(IMediator mediator, DevHomeDB devHomeDB, ILogger<DevHomeDB> logger)
+    public DevHomeService(IMediator mediator, ILogger<DevHomeDB> logger)
     {
         _mediator = mediator;
-        _devHomeDB = devHomeDB;
+        //_devHomeDB = App;
         _logger = logger;
     }
 
@@ -34,6 +33,19 @@ public class DevHomeService
             return;
         }
         ClientDict.TryAdd(clientConnectInfo.ConnectId, clientConnectInfo);
+    }
+
+    internal void RemoveConnect(ClientConnectInfo clientConnectInfo)
+    {
+        // 删除id
+        if(!ClientDict.ContainsKey(clientConnectInfo.ConnectId))
+        {
+            _logger.LogWarning("{ID} 未注册", clientConnectInfo.ConnectId);
+            return;
+        }
+        // 尝试删除
+        ClientDict.TryRemove(clientConnectInfo.ConnectId, out _);
+        //ClientDict.TryRemove();
     }
 
     internal void UpdateClientId(string connectId, string clientId)

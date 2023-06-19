@@ -12,6 +12,8 @@ using SciDevHome.Client.WinUI.Notifications;
 using SciDevHome.Client.WinUI.Services;
 using SciDevHome.Client.WinUI.ViewModels;
 using SciDevHome.Client.WinUI.Views;
+using SciDevHome.Server;
+using Windows.Services.Maps;
 
 namespace SciDevHome.Client.WinUI;
 
@@ -73,6 +75,8 @@ public partial class App : Application
             services.AddSingleton<IFileService, FileService>();
 
             // Views and ViewModels
+            services.AddTransient<DirctoryPathViewViewModel>();
+            services.AddTransient<DirctoryPathViewPage>();
             services.AddTransient<SettingsViewModel>();
             services.AddTransient<SettingsPage>();
             services.AddTransient<ClientListDetailViewModel>();
@@ -84,6 +88,13 @@ public partial class App : Application
             services.AddTransient<ShellPage>();
             services.AddTransient<ShellViewModel>();
 
+
+            services.AddGrpcClient<Greeter.GreeterClient>("test", options =>
+            {
+                // 需要读取配置， 但这样只能单例
+                options.Address = new Uri("http://172.168.35.77:45152");
+            });
+
             // Configuration
             services.Configure<LocalSettingsOptions>(context.Configuration.GetSection(nameof(LocalSettingsOptions)));
         }).
@@ -93,6 +104,10 @@ public partial class App : Application
 
         UnhandledException += App_UnhandledException;
     }
+
+
+
+
 
     private void App_UnhandledException(object sender, Microsoft.UI.Xaml.UnhandledExceptionEventArgs e)
     {

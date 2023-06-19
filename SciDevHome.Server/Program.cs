@@ -15,6 +15,9 @@ namespace SciDevHome.Server
             builder.Services.AddGrpc();
 
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+
+
+            builder.Services.AddSingleton<DevHomeService>();
             builder.Services.AddDbContext<DevHomeDb>(options =>
                 options.UseSqlite(connectionString));
 
@@ -23,14 +26,13 @@ namespace SciDevHome.Server
             {
                 config.RegisterServicesFromAssemblyContaining<ServerEntryPoint>();
             });
-            builder.Services.AddSingleton<DevHomeService>();
             #endregion
 
 
             var app = builder.Build();
             // Configure the HTTP request pipeline.
             app.MapGrpcService<GreeterService>();
-
+            
             //new DevHomeDb().Database.Migrate();
             
             // 迁移数据库

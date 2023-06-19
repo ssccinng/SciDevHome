@@ -18,6 +18,7 @@ public class PageService : IPageService
         Configure<ClientListViewModel, ClientListPage>();
         Configure<ClientListDetailViewModel, ClientListDetailPage>();
         Configure<SettingsViewModel, SettingsPage>();
+        Configure<DirctoryPathViewViewModel, DirctoryPathViewPage>();
     }
 
     public Type GetPageType(string key)

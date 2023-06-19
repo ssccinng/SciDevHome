@@ -8,10 +8,10 @@ namespace SciDevHome.Server.Model
            : base(options)
         {
         }
-        public DevHomeDb()
-        {
+        //public DevHomeDb()
+        //{
 
-        }
+        //}
 
         public DbSet<User> Users { get; set; }
     }

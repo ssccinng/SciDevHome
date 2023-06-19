@@ -111,4 +111,7 @@
   &lt;/actions&gt;
 &lt;/toast&gt;</value>
   </data>
+  <data name="Shell_DirctoryPathView.Content" xml:space="preserve">
+    <value>DirctoryPathView</value>
+  </data>
 </root>
