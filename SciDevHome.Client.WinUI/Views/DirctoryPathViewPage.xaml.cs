@@ -4,6 +4,7 @@ using Grpc.Net.ClientFactory;
 using Microsoft.UI.Xaml.Controls;
 
 using SciDevHome.Client.WinUI.ViewModels;
+using SciDevHome.Data;
 using SciDevHome.Server;
 
 namespace SciDevHome.Client.WinUI.Views;
@@ -48,5 +49,13 @@ public sealed partial class DirctoryPathViewPage : Page
     {
         // 此段工具化
         ViewModel.RefreshClient();
+    }
+
+    private void NowFloderView_ItemClick(object sender, ItemClickEventArgs e)
+    {
+
+        var item = e.ClickedItem as Folder;
+
+        ViewModel.GetPath(item.Name);
     }
 }

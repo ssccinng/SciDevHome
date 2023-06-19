@@ -1,7 +1,9 @@
 ﻿using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Grpc.Net.ClientFactory;
+using SciDevHome.Data;
 using SciDevHome.Server;
+using SciDevHome.Utils;
 using Windows.Media.Protection.PlayReady;
 
 namespace SciDevHome.Client.WinUI.ViewModels;
@@ -10,10 +12,13 @@ public partial class DirctoryPathViewViewModel : ObservableRecipient
 {
     [ObservableProperty]
    ObservableCollection<ClientItem> _clientInfos = new ();
-
+    [ObservableProperty]
+    ObservableCollection<Folder> _nowFoldList = new();
 
     private readonly GrpcClientFactory _grpcClientFactory;
     Greeter.GreeterClient _client;
+
+
     public DirctoryPathViewViewModel(GrpcClientFactory grpcClientFactory)
     {
 
@@ -29,6 +34,30 @@ public partial class DirctoryPathViewViewModel : ObservableRecipient
         ClientInfos.Clear();
        var ff  = new ObservableCollection<ClientItem>(clients.Clients.Select(client => new ClientItem { ClientId = client.ClientId, Name = client.Name }));
         foreach (var client in ff) { ClientInfos.Add(client); }
+
+        // 能直接赋值吗 Todo: 缓存之前的路径
+
+
+        RefreshFolder(ZQDHelper.GetRootPath());
+
+    }
+
+    private void RefreshFolder(IEnumerable<Folder> folders)
+    {
+        NowFoldList.Clear();
+        foreach (var item in folders )
+        {
+            NowFoldList.Add(item);
+        }
+    }
+
+
+    internal async void GetPath(string name)
+    {
+        // 需要完整路径des
+
+        var path = await _client.GetClientPathAsync(new SciDevHome.Server.GetPathRequest { ClientId = _clientInfos[0].ClientId, Path = name });
+        RefreshFolder(path.Files.Select(s => new Folder { Name = s.Name }));
     }
 }
 

@@ -83,11 +83,14 @@ namespace SciDevHome.Server.Services
 
         public override Task<GetPathResponse> GetClientPath(GetPathRequest request, ServerCallContext context)
         {
+
+            // 调用服务等待获取？
+            //var 
             //_clientDict[request.ClientId].WriteAsync(new ConnectResponse
             //{
             //    Cmd = "getPathInfo",
             //    Data = JsonSerializer.Serialize(new GetPathRequestMessage
-            //    { 
+            //    {
             //        Path = request.Path,
             //    })
             //});

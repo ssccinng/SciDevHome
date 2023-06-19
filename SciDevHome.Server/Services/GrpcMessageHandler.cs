@@ -20,6 +20,7 @@ namespace SciDevHome.Server.Services
                     // 初始化
                     break;
                 case "pathInfo":
+                    // Todo: 直接输出 需要返回, 设计返回机制 回调也可
                     Console.WriteLine("pathInfo");
                     var daa = JsonSerializer.Deserialize<GrpcDirctoryInfo[]>(request.Data);
                     foreach (var item in daa)

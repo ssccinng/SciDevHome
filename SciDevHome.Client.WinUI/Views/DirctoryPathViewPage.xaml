@@ -32,5 +32,16 @@
                            x:Name="BreadcrumbBar1"/>
         </StackPanel>
 
+
+        <ListView 
+            Grid.Row="1"
+            ItemsSource="{x:Bind ViewModel.NowFoldList}"
+            DisplayMemberPath="Name"
+            x:Name="NowFloderView"
+            ItemClick="NowFloderView_ItemClick"
+             IsItemClickEnabled="True"
+            >
+            
+        </ListView>
     </Grid>
 </Page>
