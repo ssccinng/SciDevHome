@@ -8,6 +8,7 @@ using Grpc.Net.Client;
 using SciDevHome.Server;
 
 namespace SciDevHome.GrpcService;
+[Obsolete]
 public class GrpcClient
 {
     GrpcChannel GrpcChannel;// 

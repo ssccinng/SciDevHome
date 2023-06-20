@@ -6,21 +6,26 @@ using SciDevHome.Server.Services;
 
 namespace SciDevHome.Server.Mediator.Handler;
 /// <summary>
-/// 连接信息
+/// 处理grpc连接信息
 /// </summary>
 public class ConnectMessageCommandHandler : IRequestHandler<ConnectMessageCommand>
 {
     private readonly DevHomeService _devHomeService;
     private readonly IMediator _mediator;
+    private readonly StreamGrpcManager _streamGrpcManager;
 
-    public ConnectMessageCommandHandler(DevHomeService devHomeService, IMediator mediator)
+    public ConnectMessageCommandHandler(DevHomeService devHomeService, IMediator mediator, StreamGrpcManager streamGrpcManager)
     {
         _devHomeService = devHomeService;
         _mediator = mediator;
+        _streamGrpcManager = streamGrpcManager;
     }
     public Task Handle(ConnectMessageCommand request, CancellationToken cancellationToken)
     {
-        
+        if (request.request.ReqId != String.Empty)
+        {
+            _streamGrpcManager.AddResponse(request.request);
+        }
         switch (request.request.Cmd)
         {
             case "InitClient":
@@ -29,6 +34,7 @@ public class ConnectMessageCommandHandler : IRequestHandler<ConnectMessageComman
                 _devHomeService.UpdateClientId(request.connectId, initClientData.ClientId, initClientData.Name);
                 break;
             case "GetPathInfo":
+                
                 break;
             case "":
                 break;

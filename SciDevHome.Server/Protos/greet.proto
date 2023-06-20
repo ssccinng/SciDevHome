@@ -49,12 +49,14 @@ message ConnectRequest {
   string cmd = 1;
   // 带入连接信息，如IP，名字等
   string data = 2;
+  string reqId = 3;
 }
-
+// 可以同一化
 message ConnectResponse {
    string cmd = 1;
   // 带入连接信息，如IP，名字等
   string data = 2;
+  string reqId = 3;
 }
 
 message ClientInfo {

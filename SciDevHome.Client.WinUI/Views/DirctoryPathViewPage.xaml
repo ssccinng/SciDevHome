@@ -21,6 +21,7 @@
         <ComboBox SelectionChanged="ComboBox_SelectionChanged" 
                   PlaceholderText="Pick a client" Width="200"
                   ItemsSource="{x:Bind ViewModel.ClientInfos}"
+                  SelectedItem="{x:Bind ViewModel.SelectClient, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                   DisplayMemberPath="ClientName"
 
                   

@@ -16,14 +16,16 @@ namespace SciDevHome.Server.Services
         private readonly ILogger<GreeterService> _logger;
         private readonly DevHomeDb _devHomeDb;
         private readonly IMediator _mediator;
+        private readonly StreamGrpcManager _streamGrpcManager;
 
         // 可能亲求也需要标记
 
-        public GreeterService(ILogger<GreeterService> logger, DevHomeDb devHomeDb, IMediator mediator)
+        public GreeterService(ILogger<GreeterService> logger, DevHomeDb devHomeDb, IMediator mediator, StreamGrpcManager streamGrpcManager)
         {
             _logger = logger;
             _devHomeDb = devHomeDb;
             _mediator = mediator;
+            _streamGrpcManager = streamGrpcManager;
         }
         private string GetClientIpAddress(ServerCallContext context)
         {
@@ -81,21 +83,27 @@ namespace SciDevHome.Server.Services
             });
         }
 
-        public override Task<GetPathResponse> GetClientPath(GetPathRequest request, ServerCallContext context)
+        public override async Task<GetPathResponse> GetClientPath(GetPathRequest request, ServerCallContext context)
         {
-
-            // 调用服务等待获取？
-            //var 
-            //_clientDict[request.ClientId].WriteAsync(new ConnectResponse
-            //{
-            //    Cmd = "getPathInfo",
-            //    Data = JsonSerializer.Serialize(new GetPathRequestMessage
-            //    {
-            //        Path = request.Path,
-            //    })
-            //});
-
-            return Task.FromResult(new GetPathResponse { Path = request.Path });
+            
+            // 需要有管理机制，等待客户端回复，或超时等
+            var res = await _streamGrpcManager.SendConnectStreamAsync(request.ClientId, new ConnectResponse
+            {
+                Cmd = "getPathInfo",
+                Data = JsonSerializer.Serialize(new GetPathRequestMessage
+                {
+                    Path = request.Path,
+                }),
+                ReqId = Guid.NewGuid().ToString()
+                // 也许可优化
+                
+                
+            });
+            // todo: 转换是不是太多了（?
+            var gg = JsonSerializer.Deserialize<List<GrpcDirctoryInfo>>(res.Data);
+            var getp = new GetPathResponse { Path = request.Path };
+            getp.Files.AddRange(gg.Select(s => new GrpcFileInfo { IsDirectory = s.IsDirectory, Name = s.Path}));
+            return getp;
         }
         /// <summary>
         /// 获取所有在线客户端， // 客户端本地也需缓存
@@ -141,13 +149,7 @@ namespace SciDevHome.Server.Services
             await _mediator.Send(new ConnectStartEvent(cinfo));
             // Todo: 还需要重连代码desuwa
 
-
-            //context.
-            // 注册代码
-            //if (!_clientDict.ContainsKey(" "))
-            //{
-            //    _clientDict.TryAdd(" ", responseStream);
-            //}
+            
             _logger.LogInformation($"New connection: {connectionId}");
             try
             {
@@ -159,6 +161,7 @@ namespace SciDevHome.Server.Services
                     if (requestStream.MoveNext().Result)
                     {
                         var request = requestStream.Current;
+                        // 发起连接信息 中介者处理连接信息
                         await _mediator.Send(new ConnectMessageCommand(request, connectionId));
 
 

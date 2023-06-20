@@ -18,6 +18,7 @@ namespace SciDevHome.Server
 
 
             builder.Services.AddSingleton<DevHomeService>();
+            builder.Services.AddSingleton<StreamGrpcManager>();
             builder.Services.AddDbContext<DevHomeDb>(options =>
                 options.UseSqlite(connectionString));
 

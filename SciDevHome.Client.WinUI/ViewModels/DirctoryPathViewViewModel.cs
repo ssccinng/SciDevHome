@@ -17,7 +17,8 @@ public partial class DirctoryPathViewViewModel : ObservableRecipient
 
     private readonly GrpcClientFactory _grpcClientFactory;
     Greeter.GreeterClient _client;
-
+    [ObservableProperty]
+    ClientItem _selectClient;
 
     public DirctoryPathViewViewModel(GrpcClientFactory grpcClientFactory)
     {
@@ -37,11 +38,16 @@ public partial class DirctoryPathViewViewModel : ObservableRecipient
 
         // 能直接赋值吗 Todo: 缓存之前的路径
 
-
-        RefreshFolder(ZQDHelper.GetRootPath());
+        // 要获取客户端的嗼
+        // RefreshFolder(ZQDHelper.GetRootPath());
+        // 先尝试获取根，后面再考虑获取存档之中
+        GetPath("");
 
     }
-
+    /// <summary>
+    /// 刷新当前目录
+    /// </summary>
+    /// <param name="folders"></param>
     private void RefreshFolder(IEnumerable<Folder> folders)
     {
         NowFoldList.Clear();
@@ -55,7 +61,7 @@ public partial class DirctoryPathViewViewModel : ObservableRecipient
     internal async void GetPath(string name)
     {
         // 需要完整路径des
-
+        if (SelectClient == null) return;
         var path = await _client.GetClientPathAsync(new SciDevHome.Server.GetPathRequest { ClientId = _clientInfos[0].ClientId, Path = name });
         RefreshFolder(path.Files.Select(s => new Folder { Name = s.Name }));
     }

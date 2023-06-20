@@ -34,9 +34,9 @@ namespace SciDevHome.Server.Services
         }
     }
     
-    public class ConnectMessage
-    {
-        public string Cmd { get; set; }
-        public JsonElement Data { get; set; }
-    }
+    // public class ConnectMessage
+    // {
+    //     public string Cmd { get; set; }
+    //     public JsonElement Data { get; set; }
+    // }
 }

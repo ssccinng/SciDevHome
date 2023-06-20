@@ -29,6 +29,9 @@ public sealed partial class DirctoryPathViewPage : Page
 
     private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
+        // 魔改des
+        ViewModel.GetPath("");
+
     }
 
     private void BreadcrumbBar1_ItemClicked(BreadcrumbBar sender, BreadcrumbBarItemClickedEventArgs args)
@@ -53,9 +56,15 @@ public sealed partial class DirctoryPathViewPage : Page
 
     private void NowFloderView_ItemClick(object sender, ItemClickEventArgs e)
     {
-
+        if (e.ClickedItem == null)
+        {
+            return;
+        }
         var item = e.ClickedItem as Folder;
+        if ((File.GetAttributes(item.Name) & FileAttributes.Directory) == FileAttributes.Directory)
+        {
+            ViewModel.GetPath(item.Name);
 
-        ViewModel.GetPath(item.Name);
+        }
     }
 }
