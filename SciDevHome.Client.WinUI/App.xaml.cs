@@ -13,6 +13,7 @@ using SciDevHome.Client.WinUI.Services;
 using SciDevHome.Client.WinUI.ViewModels;
 using SciDevHome.Client.WinUI.Views;
 using SciDevHome.Server;
+
 using Windows.Services.Maps;
 
 namespace SciDevHome.Client.WinUI;
@@ -75,6 +76,8 @@ public partial class App : Application
             services.AddSingleton<IFileService, FileService>();
 
             // Views and ViewModels
+            services.AddTransient<ServerConnectViewModel>();
+            services.AddTransient<ServerConnectPage>();
             services.AddTransient<DirctoryPathViewViewModel>();
             services.AddTransient<DirctoryPathViewPage>();
             services.AddTransient<SettingsViewModel>();

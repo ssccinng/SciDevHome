@@ -1,3 +1,6 @@
+using System.Net;
+using System.Net.Sockets;
+using System.Text;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using SciDevHome.Server.Model;
@@ -21,7 +24,6 @@ namespace SciDevHome.Server
             builder.Services.AddSingleton<StreamGrpcManager>();
             builder.Services.AddDbContext<DevHomeDb>(options =>
                 options.UseSqlite(connectionString));
-
             #region 服务
             builder.Services.AddMediatR(config =>
             {
@@ -43,8 +45,22 @@ namespace SciDevHome.Server
 
 
             app.MapGet("/", () => "Communication with gRPC endpoints must be made through a gRPC client. To learn how to create a client, visit: https://go.microsoft.com/fwlink/?linkid=2086909");
-
+            new Thread(BoardcastInfo).Start();
             app.Run();
+        }
+
+        public static async void BoardcastInfo()
+        {
+            
+            UdpClient udpClient = new UdpClient();
+            udpClient.EnableBroadcast = true;
+            while (true)
+            {
+                var data = Encoding.UTF8.GetBytes(string.Join('\n', Dns.GetHostEntry(Dns.GetHostName()).AddressList.Where(s => !s.AddressFamily.HasFlag( AddressFamily.InterNetworkV6)).Select(s => $"zqd {s}:45152 scixing")));
+                udpClient.Send(data, data.Length, "255.255.255.255", 54415);
+
+                await Task.Delay(1000); 
+            }
         }
     }
 }

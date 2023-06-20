@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 using SciDevHome.Data;
@@ -50,4 +52,34 @@ public class ZQDHelper
         return s_names[Random.Shared.Next(0, s_names.Length)];
     }
 
+
+    public static async Task<IEnumerable<string>> GetServerListAsync()
+    {
+        HashSet<string>  serverList = new();
+        CancellationTokenSource cancellationTokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+        using UdpClient client = new UdpClient();
+        client.Connect("172.168.35.31", 54415);
+        try
+        {
+            while (true)
+            {
+                var res = await client.ReceiveAsync(cancellationTokenSource.Token);
+                var ip = Encoding.UTF8.GetString(res.Buffer);
+                if (ip.StartsWith("zqd") && ip.EndsWith("scixing"))
+                {
+                    serverList.Add(ip[4..^8]);
+                }
+            }
+        }
+        catch (OperationCanceledException)
+        {
+
+            
+        }
+        finally
+        {
+            client.Close();
+        }
+        return serverList;
+    }
 }

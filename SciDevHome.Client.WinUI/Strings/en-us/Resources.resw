@@ -114,4 +114,7 @@
   <data name="Shell_DirctoryPathView.Content" xml:space="preserve">
     <value>DirctoryPathView</value>
   </data>
+  <data name="Shell_ServerConnect.Content" xml:space="preserve">
+    <value>ServerConnect</value>
+  </data>
 </root>

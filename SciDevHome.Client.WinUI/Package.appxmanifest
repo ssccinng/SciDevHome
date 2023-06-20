@@ -13,7 +13,7 @@
   <Identity
     Name="c1b3e156-7351-4752-bf60-eff07e60176b"
     Publisher="CN=scixing"
-    Version="1.0.3.0" />
+    Version="1.0.4.0" />
     
   <mp:PhoneIdentity PhoneProductId="c1b3e156-7351-4752-bf60-eff07e60176b" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
     
