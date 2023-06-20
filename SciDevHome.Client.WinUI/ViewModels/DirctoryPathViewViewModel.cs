@@ -62,7 +62,7 @@ public partial class DirctoryPathViewViewModel : ObservableRecipient
     {
         // 需要完整路径des
         if (SelectClient == null) return;
-        var path = await _client.GetClientPathAsync(new SciDevHome.Server.GetPathRequest { ClientId = _clientInfos[0].ClientId, Path = name });
+        var path = await _client.GetClientPathAsync(new SciDevHome.Server.GetPathRequest { ClientId = SelectClient.ClientId, Path = name });
         RefreshFolder(path.Files.Select(s => new Folder { Name = s.Name, IsDirectory = s.IsDirectory }));
     }
 }
