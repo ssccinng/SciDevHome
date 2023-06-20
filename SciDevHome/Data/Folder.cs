@@ -13,4 +13,8 @@ public record Folder
     {
         get; set;
     }
+
+    public bool IsDirectory
+    {
+    get; set; }
 }

@@ -35,7 +35,7 @@ public class ZQDHelper
         List<Folder> folders = new List<Folder>();
         foreach (DriveInfo drive in DriveInfo.GetDrives())
         {
-            folders.Add(new Folder { Name = drive.Name });
+            folders.Add(new Folder { Name = drive.Name, IsDirectory = true }) ;
         }
 
         // 加上环境

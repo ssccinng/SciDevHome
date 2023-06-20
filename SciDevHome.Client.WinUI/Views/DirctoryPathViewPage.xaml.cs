@@ -61,7 +61,7 @@ public sealed partial class DirctoryPathViewPage : Page
             return;
         }
         var item = e.ClickedItem as Folder;
-        if ((File.GetAttributes(item.Name) & FileAttributes.Directory) == FileAttributes.Directory)
+        if (item.IsDirectory)
         {
             ViewModel.GetPath(item.Name);
 
