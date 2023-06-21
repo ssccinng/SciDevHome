@@ -20,6 +20,8 @@ public class PageService : IPageService
         Configure<SettingsViewModel, SettingsPage>();
         Configure<DirctoryPathViewViewModel, DirctoryPathViewPage>();
         Configure<ServerConnectViewModel, ServerConnectPage>();
+        Configure<SoftwareDownloadViewModel, SoftwareDownloadPage>();
+        Configure<SoftwareDownloadDetailViewModel, SoftwareDownloadDetailPage>();
     }
 
     public Type GetPageType(string key)

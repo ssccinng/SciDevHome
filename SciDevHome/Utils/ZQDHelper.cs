@@ -58,7 +58,7 @@ public class ZQDHelper
         HashSet<string>  serverList = new();
         CancellationTokenSource cancellationTokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(5));
         using UdpClient client = new UdpClient();
-        client.Connect("172.168.35.31", 54415);
+        client.Client.Bind(new IPEndPoint(IPAddress.Any, 54415));
         try
         {
             while (true)

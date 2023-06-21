@@ -117,4 +117,7 @@
   <data name="Shell_ServerConnect.Content" xml:space="preserve">
     <value>ServerConnect</value>
   </data>
+  <data name="Shell_SoftwareDownload.Content" xml:space="preserve">
+    <value>SoftwareDownload</value>
+  </data>
 </root>

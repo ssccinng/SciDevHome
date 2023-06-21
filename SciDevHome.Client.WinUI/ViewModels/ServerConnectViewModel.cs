@@ -8,12 +8,15 @@ public partial class ServerConnectViewModel : ObservableRecipient
 {
     [ObservableProperty]
     ObservableCollection<string> _servers = new();
+
+    [ObservableProperty] private bool _isNotSearch = true;
     public ServerConnectViewModel()
     {
     }
 
     public async Task UpdateServer()
     {
+        IsNotSearch = false;
         var ss = await ZQDHelper.GetServerListAsync();
 
         Servers.Clear();
@@ -22,5 +25,7 @@ public partial class ServerConnectViewModel : ObservableRecipient
         {
             Servers.Add(item);
         }
+
+        _isNotSearch = true;
     }
 }
