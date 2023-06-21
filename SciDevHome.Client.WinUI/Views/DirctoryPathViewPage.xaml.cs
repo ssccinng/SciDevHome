@@ -22,7 +22,7 @@ public sealed partial class DirctoryPathViewPage : Page
     {
         ViewModel = App.GetService<DirctoryPathViewViewModel>();
         InitializeComponent();
-        BreadcrumbBar1.ItemsSource = new ObservableCollection<string> { "Home", "Documents", "Design", "Northwind", "Images", "Folder1", "Folder2", "Folder3" };
+        // BreadcrumbBar1.ItemsSource = new ObservableCollection<string> { "Home", "Documents", "Design", "Northwind", "Images", "Folder1", "Folder2", "Folder3" };
 
 
     }
@@ -36,14 +36,14 @@ public sealed partial class DirctoryPathViewPage : Page
 
     private void BreadcrumbBar1_ItemClicked(BreadcrumbBar sender, BreadcrumbBarItemClickedEventArgs args)
     {
-        var items = BreadcrumbBar1.ItemsSource as ObservableCollection<string>;
-        Debug.WriteLine(sender.Name);
-        Debug.WriteLine(args.Item);
-        Debug.WriteLine(args.Index);
-        for (int i = items.Count - 1; i >= args.Index + 1; i--)
-        {
-            items.RemoveAt(i);
-        }
+        // var items = BreadcrumbBar1.ItemsSource as ObservableCollection<string>;
+        // Debug.WriteLine(sender.Name);
+        // Debug.WriteLine(args.Item);
+        // Debug.WriteLine(args.Index);
+        // for (int i = items.Count - 1; i >= args.Index + 1; i--)
+        // {
+        //     items.RemoveAt(i);
+        // }
 
 
     }
@@ -56,6 +56,8 @@ public sealed partial class DirctoryPathViewPage : Page
 
     private void NowFloderView_ItemClick(object sender, ItemClickEventArgs e)
     {
+        
+        // 若是磁盘 可能需要去除/
         if (e.ClickedItem == null)
         {
             return;
@@ -63,8 +65,20 @@ public sealed partial class DirctoryPathViewPage : Page
         var item = e.ClickedItem as Folder;
         if (item.IsDirectory)
         {
-            ViewModel.GetPath(item.Name);
+            ViewModel.BaseFolderPath.Add(item.Name);
+            ViewModel.GetPathFilename(item.Name);
 
         }
+    }
+
+    private void ClientFolderPath_OnItemClicked(BreadcrumbBar sender, BreadcrumbBarItemClickedEventArgs args)
+    {
+        var items = ViewModel.BaseFolderPath;
+        for (int i = items.Count - 1; i >= args.Index + 1; i--)
+        {
+            items.RemoveAt(i);
+        }
+        
+        ViewModel.GetPathFilename("");
     }
 }

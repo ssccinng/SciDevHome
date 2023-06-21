@@ -29,8 +29,10 @@
         </ComboBox>
             <BreadcrumbBar VerticalAlignment="Center"
                            Margin="15,0,0,0"
-                            ItemClicked="BreadcrumbBar1_ItemClicked"
-                           x:Name="BreadcrumbBar1"/>
+                           ItemClicked="ClientFolderPath_OnItemClicked"
+                           x:Name="ClientFolderPath"
+                           ItemsSource="{x:Bind ViewModel.BaseFolderPath}"
+                           />
         </StackPanel>
 
 
