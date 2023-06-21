@@ -19,6 +19,10 @@ public sealed partial class ServerConnectPage : Page
 
     private async void Button_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
     {
+        ViewModel.IsNotSearch = false;
+
         await ViewModel.UpdateServer();
+        ViewModel.IsNotSearch = true;
+
     }
 }

@@ -24,7 +24,6 @@
                   SelectedItem="{x:Bind ViewModel.SelectClient, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                   DisplayMemberPath="ClientName"
 
-                  
                   >
         </ComboBox>
             <BreadcrumbBar VerticalAlignment="Center"

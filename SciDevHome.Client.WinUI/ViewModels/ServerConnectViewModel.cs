@@ -16,7 +16,6 @@ public partial class ServerConnectViewModel : ObservableRecipient
 
     public async Task UpdateServer()
     {
-        IsNotSearch = false;
         var ss = await ZQDHelper.GetServerListAsync();
 
         Servers.Clear();
@@ -26,6 +25,5 @@ public partial class ServerConnectViewModel : ObservableRecipient
             Servers.Add(item);
         }
 
-        _isNotSearch = true;
     }
 }

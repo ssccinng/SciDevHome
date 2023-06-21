@@ -4,19 +4,20 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    IsEnabled="{x:Bind ViewModel.IsNotSearch}"
+    IsEnabled="{x:Bind ViewModel.IsNotSearch, Mode=TwoWay}"
     mc:Ignorable="d">
 
     <Grid x:Name="ContentArea">
         <StackPanel Orientation="Horizontal" VerticalAlignment="Top">
             
 		<ComboBox IsEditable="True" ItemsSource="{x:Bind ViewModel.Servers}" Width="200" 
+                  IsEnabled="{x:Bind ViewModel.IsNotSearch, Mode=TwoWay}"
+
                  />
             <!-- <Button VerticalAlignment="Top">添加(需要重启)</Button> -->
             <Button VerticalAlignment="Top" Click="Button_Click">
                 <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE72c;"></FontIcon>
             </Button>
         </StackPanel>
-        <ProgressBar Width="130" IsIndeterminate="{x:Bind ViewModel.IsNotSearch }" ShowPaused="False" ShowError="False" />
     </Grid>
 </Page>

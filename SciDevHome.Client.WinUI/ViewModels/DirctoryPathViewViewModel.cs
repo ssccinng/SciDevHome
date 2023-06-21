@@ -87,7 +87,7 @@ public partial class DirctoryPathViewViewModel : ObservableRecipient
         {
             Name = BaseFolderPath.Count == 1 ? s.Name : Path.GetFileName(s.Name),
             IsDirectory = s.IsDirectory
-        }));
+        }).OrderByDescending(s => s.IsDirectory));
     }
 }
 
