@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using System.Text.Json;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.UI.Xaml;
 
@@ -15,6 +16,8 @@ using SciDevHome.Client.WinUI.Views;
 using SciDevHome.Server;
 
 using Windows.Services.Maps;
+using SciDevHome.Message;
+using SciDevHome.Utils;
 
 namespace SciDevHome.Client.WinUI;
 
@@ -95,6 +98,8 @@ public partial class App : Application
             services.AddTransient<ShellPage>();
             services.AddTransient<ShellViewModel>();
 
+            services.AddSingleton<DevHomeClientService>();
+
             // 读取文件
 
             services.AddGrpcClient<Greeter.GreeterClient>("test", options =>
@@ -131,5 +136,40 @@ public partial class App : Application
         App.GetService<IAppNotificationService>().Show(string.Format("AppNotificationSamplePayload".GetLocalized(), AppContext.BaseDirectory));
 
         await App.GetService<IActivationService>().ActivateAsync(args);
+        await Init();
+    }
+    
+    
+    async Task Init()
+    {
+        var ViewModel = App.GetService<MainViewModel>();
+        MainViewModel.Saves = await SaveFileManager.LoadAsync("devhomeSetting.json");
+
+        if (MainViewModel.Saves.ClientId == string.Empty)
+        {
+            var regRes = await ViewModel.Client.RegisterAsync(new SciDevHome.Server.ClientInfo { Name = "临流" });
+            MainViewModel.Saves.ClientId = regRes.ClientId;
+            await Utils.SaveFileManager.SaveAsync("devhomeSetting.json", MainViewModel.Saves);
+        }
+        if (MainViewModel.Saves.ComputerName == string.Empty)
+        {
+            MainViewModel.Saves.ComputerName = ZQDHelper.GetRandomName();
+            await Utils.SaveFileManager.SaveAsync("devhomeSetting.json", MainViewModel.Saves);
+
+        }
+
+        var stream = ViewModel.Client.Connect();
+        await stream.RequestStream.WriteAsync(new Server.ConnectRequest
+        {
+            Cmd = "InitClient",
+            Data = JsonSerializer.Serialize(new ClientIdUpdateMessage { ClientId = MainViewModel.Saves.ClientId ,
+                Name = MainViewModel.Saves.ComputerName
+
+
+            })
+        });
+        // 不要放main里
+        new Thread(() => { MainViewModel.ListenServer(stream); }).Start();
+
     }
 }
