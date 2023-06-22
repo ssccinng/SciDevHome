@@ -43,7 +43,12 @@ public class DevHomeClientService
         ClientItems =
             clients.Clients.Select(client => new ClientItem { ClientId = client.ClientId, Name = client.Name });
     }
-
+    /// <summary>
+    /// 获取客户端数据（？？
+    /// </summary>
+    /// <param name="parameter"></param>
+    /// <returns></returns>
+    /// <exception cref="NotImplementedException"></exception>
     public async Task<object> GetClientDataAsync(object parameter)
     {
         throw new NotImplementedException();

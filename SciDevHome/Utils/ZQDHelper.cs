@@ -64,7 +64,7 @@ public class ZQDHelper
             while (true)
             {
                 var res = await client.ReceiveAsync(cancellationTokenSource.Token);
-                var ip = Encoding.UTF8.GetString(res.Buffer);
+                var ip = Encoding.UTF8.GetString(res.Buffer).Split("\n")[0].Trim();
                 if (ip.StartsWith("zqd") && ip.EndsWith("scixing"))
                 {
                     serverList.Add(ip[4..^8]);

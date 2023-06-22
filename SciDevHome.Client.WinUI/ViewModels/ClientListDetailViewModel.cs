@@ -25,7 +25,7 @@ public partial class ClientListDetailViewModel : ObservableRecipient, INavigatio
     {
         if (parameter is string orderID)
         {
-            var data = await _devHomeClientService.GetClientDataAsync(parameter);
+            //var data = await _devHomeClientService.GetClientDataAsync(parameter);
             // Item = data.First(i => i.OrderID == orderID);
         }
     }
