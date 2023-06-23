@@ -1,3 +1,4 @@
+using System.Text.Json;
 using Grpc.Net.Client;
 using SciDevHome.Providers;
 using SciDevHome.Server;
@@ -11,12 +12,12 @@ public class ConnectAPIFactory
 public class ConnectAPI
 {
     // 如何自在化（？？
-    public ConnectAPI(Greeter.GreeterClient client)
-    {
-        // 初始化grpc(? howto
-    }
-
-    private Greeter.GreeterClient _client;
+    // public ConnectAPI(Greeter.GreeterClient client)
+    // {
+    //     // 初始化grpc(? howto
+    // }
+    //
+    // private Greeter.GreeterClient _client;
     // 只需在初始化的时候就获取服务然后初始化（？？？ 但若是不止一个怎么办
     // 那就工厂！！！
     public void Init()
@@ -26,9 +27,19 @@ public class ConnectAPI
     }
     
     // 需要这个t吗
-    public async Task<ConnectResponse> SendRequestAsync<T>(
-        ConnectProvider<T> provide, T Data)
+    public static async Task<ConnectRequest> SendRequestAsync(
+        ConnectProvider provide, ConnectResponse Data) // 这里的t有用吗
     {
-        throw new NotImplementedException();
+        var res =  provide.Handler(Data.Data);
+        return new ConnectRequest
+        {
+            Cmd = "Reply",
+            Data = JsonSerializer.Serialize(res),
+            ReqId = Data.ReqId
+        };
+        // 判断data的
+        // 这里如何传入拿什么流
+        // 我想想（？用作扩展方法
+
     }
 }

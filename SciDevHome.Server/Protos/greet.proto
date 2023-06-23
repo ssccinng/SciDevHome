@@ -30,6 +30,9 @@ service Greeter {
   // 下载文件
   rpc DownloadFile(DownloadFileRequest) returns (stream DownloadFileResponse) {}
 
+  // 获取电脑配置信息
+  rpc GetComputerInfo(ComputerInfoRequest) returns (ComputerInfoResponse) {}
+
 
   
 }
@@ -145,4 +148,13 @@ message DownloadFileResponse {
   int64 size = 3;
   int64 lastWriteTime = 4;
   bytes data = 5;
+}
+
+message ComputerInfoRequest {
+  string clientId = 1;
+}
+
+message ComputerInfoResponse {
+  // 各种配置信息
+  string Data = 1;
 }
