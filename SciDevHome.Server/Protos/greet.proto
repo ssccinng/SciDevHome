@@ -6,7 +6,7 @@ package DevHome;
 
 service Greeter {
   // 客户端连接服务端 双向流
-  rpc Connect(stream ConnectRequest) returns (stream ConnectResponse) {}
+  rpc Connect(stream ConnectRequest) returns (stream ConnectRequest) {}
 
   // 客户端在服务端注册，并获得一个clientId
   rpc Register(ClientInfo) returns (RegisterResponse) {}

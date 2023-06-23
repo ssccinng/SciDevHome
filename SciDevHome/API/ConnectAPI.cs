@@ -20,15 +20,16 @@ public class ConnectAPI
     // private Greeter.GreeterClient _client;
     // 只需在初始化的时候就获取服务然后初始化（？？？ 但若是不止一个怎么办
     // 那就工厂！！！
-    public void Init()
-    {
+    //public void Init()
+    //{
         
         
-    }
+    //}
     
     // 需要这个t吗
-    public static async Task<ConnectRequest> SendRequestAsync(
-        ConnectProvider provide, ConnectResponse Data) // 这里的t有用吗
+    // 这更像是回复吧
+    public static async Task<ConnectRequest> SendReplyAsync(
+        ConnectProvider provide, ConnectRequest Data) // 这里的t有用吗
     {
         var res =  provide.Handler(Data.Data);
         return new ConnectRequest
@@ -42,4 +43,6 @@ public class ConnectAPI
         // 我想想（？用作扩展方法
 
     }
+    // 构建请求
+
 }

@@ -24,7 +24,7 @@ public partial class MainViewModel : ObservableRecipient
 
    
 
-    public static async void ListenServer(AsyncDuplexStreamingCall<ConnectRequest, ConnectResponse> stream)
+    public static async void ListenServer(AsyncDuplexStreamingCall<ConnectRequest, ConnectRequest> stream)
     {
         while (true)
         {

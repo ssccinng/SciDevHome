@@ -56,7 +56,7 @@ public class ConnectProvider
                         });
                     }
 
-                    
+                    return list;
 
                 }
                 catch
@@ -76,6 +76,8 @@ public class ConnectProvider
     {
         Command = command;
         Handler = handler;
+        // 初始化可能存在问题
+        _directory.TryAdd(command, this);
     }
     // 要不所有都回复，区别只是收不收
     // public ConnectResponse Handler();

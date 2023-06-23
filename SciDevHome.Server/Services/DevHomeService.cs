@@ -86,7 +86,7 @@ public class ClientConnectInfo
     /// <summary>
     /// 若结束则此成员不可访问
     /// </summary>
-    public required IServerStreamWriter<ConnectResponse> ServerStreamWriter
+    public required IServerStreamWriter<ConnectRequest> ServerStreamWriter
     {
         get; set;
     }

@@ -28,7 +28,7 @@ public class StreamGrpcManager
         // todo: 需要安全化吗
         _messages.TryUpdate(connectRequest.ReqId, connectRequest, null);
     } 
-    public async Task<ConnectRequest> SendConnectStreamAsync(string clientId, ConnectResponse connectResponse)
+    public async Task<ConnectRequest> SendConnectStreamAsync(string clientId, ConnectRequest connectResponse)
     {
         var connectResponseReqId = connectResponse.ReqId;
         //
@@ -36,6 +36,9 @@ public class StreamGrpcManager
         // connectResponse.ReqId = connectResponseReqId;
         // 一百秒超时（？ 可能要根据信息种类设定
         CancellationTokenSource cancellationTokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(100));
+
+
+
         if (connectResponse.ReqId != string.Empty)
         {
             _messages.TryAdd(connectResponse.ReqId, null);

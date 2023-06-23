@@ -17,10 +17,10 @@ namespace SciDevHome.Utils
     {
         public static async Task ServerMessageHander(
             IClientStreamWriter<ConnectRequest> requestStream,
-            ConnectResponse response)
+            ConnectRequest response)
         {
             // ?? 这个data是不是不太对
-            var resdata = await ConnectAPI.SendRequestAsync(
+            var resdata = await ConnectAPI.SendReplyAsync(
                 ConnectProvider.GetProvider(response.Cmd), 
                 response);
             
