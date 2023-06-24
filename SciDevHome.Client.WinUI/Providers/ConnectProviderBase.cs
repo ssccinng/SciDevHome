@@ -5,12 +5,11 @@ using SciDevHome.Utils;
 
 namespace SciDevHome.Providers;
 
-
 // 连接信息功能提供者
 public class ConnectProvider
 {
     private static Dictionary<string, ConnectProvider>
-        _directory = new ();
+        _directory = new();
 
     public static ConnectProvider GetPathInfoProvider
         = new ConnectProvider("GetPathInfo",
@@ -34,7 +33,7 @@ public class ConnectProvider
 
                         return list;
                     }
-                    
+
                     var directory = new DirectoryInfo(getpm.Path);
                     var files = directory.GetFiles();
                     var dirs = directory.GetDirectories();
@@ -46,7 +45,7 @@ public class ConnectProvider
                             Path = dir.FullName, IsDirectory = true
                         });
                     }
-                    
+
                     foreach (var file in files)
                     {
                         list.Add(new GrpcDirctoryInfo()
@@ -57,21 +56,48 @@ public class ConnectProvider
                     }
 
                     return list;
-
                 }
                 catch
                 {
                     throw;
                 }
+
                 return new object();
             }
         );
+
+
+    public static ConnectProvider InitClientProvider = new ConnectProvider(
+        "InitClient",
+        data =>
+        {
+            throw new Exception();
+        });
+
+// 对于download 属于远程更新的情况
+    public static ConnectProvider DownloadFileProvider = new ConnectProvider(
+        "DownloadFile",
+        data =>
+        {
+            // 额？给我去访问接口 哼哼 啊啊
+            throw new NotImplementedException();
+        });
+
+    public static ConnectProvider UploadFileProvider = new ConnectProvider(
+        "UploadFile",
+        s =>
+        {
+            
+            // 去上传！！
+            return "ok";
+        });
+
     public string Command
     {
         get;
     }
 
-    public ConnectProvider(string command, 
+    public ConnectProvider(string command,
         Func<string, object> handler)
     {
         Command = command;

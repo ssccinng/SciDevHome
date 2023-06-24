@@ -23,7 +23,7 @@ namespace SciDevHome.Utils
             var resdata = await ConnectAPI.SendReplyAsync(
                 ConnectProvider.GetProvider(response.Cmd), 
                 response);
-            
+            // 先不分段？？
             await requestStream.WriteAsync(resdata);
         
         }
