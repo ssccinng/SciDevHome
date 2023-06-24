@@ -8,8 +8,7 @@ using SciDevHome.Server.Mediator.Queries;
 using SciDevHome.Server.Model;
 using System.Collections.Concurrent;
 using System.Text.Json;
-using SciDevHome.API;
-using SciDevHome.Providers;
+
 using SciDevHome.Server.API;
 
 namespace SciDevHome.Server.Services
@@ -98,10 +97,12 @@ namespace SciDevHome.Server.Services
             GetPathRequest request, ServerCallContext context)
         {
             // 需要有管理机制，等待客户端回复，或超时等
-
+            // 这都没send出去，都只能算构造了
+            
             var reqData =
                 await TestAPI.SendRequestAsync(
-                    ConnectProvider.GetPathInfoProvider,
+                    //ConnectProvider.GetPathInfoProvider,
+                    "GetPathInfo",
                     new GetPathRequestMessage
                     {
                         Path = request.Path,
@@ -178,19 +179,11 @@ namespace SciDevHome.Server.Services
                     if (requestStream.MoveNext().Result)
                     {
                         var request = requestStream.Current;
-                        // 发起连接信息 中介者处理连接信息
+                        // 发起连接信息 中介者处理连接信息 让中介者处理这个？？
                         await _mediator.Send(
                             new ConnectMessageCommand(request, connectionId));
 
-
-                        //GrpcMessageHandler.ClientConnectMessageHandler(responseStream, request);
-
-                        // 收到init信息之后才能知晓？
-
-                        // 等待接受一条初始化信息
-                        //await responseStream.WriteAsync(new ConnectResponse { Message = $"Hello {request.Info}" });
                     }
-                    //await Task.Delay(1000, context.CancellationToken);
                 }
             }
             catch (OperationCanceledException ex)

@@ -26,8 +26,11 @@ public class ConnectMessageCommandHandler : IRequestHandler<ConnectMessageComman
         {
             _streamGrpcManager.AddResponse(request.request);
         }
+        
+        // 这里..
         switch (request.request.Cmd)
         {
+            // 是否已经取消？？
             case "InitClient":
                 // 序列化
                 var initClientData = JsonSerializer.Deserialize<ClientIdUpdateMessage>(request.request.Data);

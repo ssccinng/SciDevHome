@@ -68,6 +68,7 @@ public partial class DirctoryPathViewViewModel : ObservableRecipient
 
     internal async void GetPath(string name)
     {
+        // 下册功能能否command+集中化？？
         // 需要完整路径des
         if (SelectClient == null) return;
         var path = await _client.GetClientPathAsync(new SciDevHome.Server.GetPathRequest { ClientId = SelectClient.ClientId, Path = name });
@@ -88,6 +89,16 @@ public partial class DirctoryPathViewViewModel : ObservableRecipient
             Name = BaseFolderPath.Count == 1 ? s.Name : Path.GetFileName(s.Name),
             IsDirectory = s.IsDirectory
         }).OrderByDescending(s => s.IsDirectory));
+    }
+
+    public async Task GetFileDetail(string name)
+    {
+        _client.DownloadFile(new DownloadFileRequest
+        {
+            ClientId = SelectClient.ClientId,
+            Path = string.Join("/", BaseFolderPath.Append(name))
+        });
+        // 要完整的namedesuwa
     }
 }
 

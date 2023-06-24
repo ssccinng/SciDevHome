@@ -159,6 +159,8 @@ public partial class App : Application
         }
 
         var stream = ViewModel.Client.Connect();
+        
+        // 啊
         await stream.RequestStream.WriteAsync(new Server.ConnectRequest
         {
             Cmd = "InitClient",

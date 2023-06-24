@@ -3,7 +3,7 @@ using Grpc.Net.Client;
 using SciDevHome.Providers;
 using SciDevHome.Server;
 
-namespace SciDevHome.API;
+namespace SciDevHome;
 
 public class ConnectAPIFactory
 {

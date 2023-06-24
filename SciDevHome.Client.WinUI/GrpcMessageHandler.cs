@@ -1,5 +1,6 @@
 ﻿using Grpc.Core;
 using SciDevHome.Message;
+using SciDevHome.Providers;
 using SciDevHome.Server;
 using System;
 using System.Collections.Generic;
@@ -8,9 +9,6 @@ using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
-using SciDevHome.API;
-using SciDevHome.Providers;
-
 namespace SciDevHome.Utils
 {
     public static class GrpcMessageHandler

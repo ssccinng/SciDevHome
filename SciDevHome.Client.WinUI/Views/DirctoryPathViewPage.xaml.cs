@@ -1,8 +1,9 @@
 ﻿using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Globalization;
 using Grpc.Net.ClientFactory;
 using Microsoft.UI.Xaml.Controls;
-
+using Microsoft.UI.Xaml.Data;
 using SciDevHome.Client.WinUI.ViewModels;
 using SciDevHome.Data;
 using SciDevHome.Server;
@@ -56,7 +57,7 @@ public sealed partial class DirctoryPathViewPage : Page
 
     private void NowFloderView_ItemClick(object sender, ItemClickEventArgs e)
     {
-        
+        // 最好是双击
         // 若是磁盘 可能需要去除/
         if (e.ClickedItem == null)
         {
@@ -68,6 +69,14 @@ public sealed partial class DirctoryPathViewPage : Page
             ViewModel.BaseFolderPath.Add(item.Name);
             ViewModel.GetPathFilename(item.Name);
 
+        }
+        else
+        {
+            ViewModel.GetFileDetail(item.Name);
+            // 检查同步
+            // 然后尝试打开 
+            // 获取文件信息
+            // 这里只能依靠viewmodel? 不对 要更泛用话才是
         }
     }
 
@@ -81,4 +90,23 @@ public sealed partial class DirctoryPathViewPage : Page
         
         ViewModel.GetPathFilename("");
     }
+}
+
+public class BoolToFontIconConverter : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, string language)
+    {
+        if (value is bool boolValue)
+        {
+            return boolValue ? "\uE838" : "\uF56E";
+        }
+        return string.Empty;
+    }
+
+    public object ConvertBack(object value, Type targetType, 
+        object parameter, string language)
+    {
+        throw new NotImplementedException();
+    }
+    
 }

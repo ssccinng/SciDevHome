@@ -4,9 +4,34 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:data="using:SciDevHome.Data"
+    xmlns:views="using:SciDevHome.Client.WinUI.Views"
     Loaded="Page_Loaded"
     mc:Ignorable="d">
+    <Page.Resources>
+        <views:BoolToFontIconConverter
+            x:Key="BoolToFontIconConverter" />
 
+        <DataTemplate x:Key="DircTemplate"
+                      x:DataType="data:Folder">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <FontIcon
+                    Glyph="{Binding IsDirectory, 
+                    Converter={StaticResource BoolToFontIconConverter}}"
+                    Margin="0,0,10,0">
+                </FontIcon>
+                <!-- <FontIcon Glyph="&#xF56E;" /> -->
+
+                <TextBlock Grid.Column="1"
+                           Text="{Binding Name}">
+                </TextBlock>
+            </Grid>
+        </DataTemplate>
+    </Page.Resources>
     <Grid x:Name="ContentArea">
         <Grid.RowDefinitions>
             <!--此为魔术，需要全局统一-->
@@ -15,35 +40,33 @@
         </Grid.RowDefinitions>
 
         <StackPanel Orientation="Horizontal"
-                    VerticalAlignment="Center"
-            >
-            
-        <ComboBox SelectionChanged="ComboBox_SelectionChanged" 
-                  PlaceholderText="Pick a client" Width="200"
-                  ItemsSource="{x:Bind ViewModel.ClientInfos}"
-                  SelectedItem="{x:Bind ViewModel.SelectClient, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
-                  DisplayMemberPath="ClientName"
+                    VerticalAlignment="Center">
 
-                  >
-        </ComboBox>
+            <ComboBox
+                SelectionChanged="ComboBox_SelectionChanged"
+                PlaceholderText="Pick a client" Width="200"
+                ItemsSource="{x:Bind ViewModel.ClientInfos}"
+                SelectedItem="{x:Bind ViewModel.SelectClient, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                DisplayMemberPath="ClientName">
+            </ComboBox>
             <BreadcrumbBar VerticalAlignment="Center"
                            Margin="15,0,0,0"
                            ItemClicked="ClientFolderPath_OnItemClicked"
                            x:Name="ClientFolderPath"
-                           ItemsSource="{x:Bind ViewModel.BaseFolderPath}"
-                           />
+                           ItemsSource="{x:Bind ViewModel.BaseFolderPath}" />
         </StackPanel>
 
 
-        <ListView 
+        <ListView
             Grid.Row="1"
             ItemsSource="{x:Bind ViewModel.NowFoldList}"
-            DisplayMemberPath="Name"
             x:Name="NowFloderView"
             ItemClick="NowFloderView_ItemClick"
-             IsItemClickEnabled="True"
-            >
-            
+            IsItemClickEnabled="True"
+            ItemTemplate="{StaticResource DircTemplate}">
+
         </ListView>
+
     </Grid>
+
 </Page>

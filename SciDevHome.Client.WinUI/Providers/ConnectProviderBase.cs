@@ -1,4 +1,6 @@
 using System.Text.Json;
+using Grpc.Net.ClientFactory;
+using SciDevHome.Client.WinUI;
 using SciDevHome.Message;
 using SciDevHome.Server;
 using SciDevHome.Utils;
@@ -87,7 +89,11 @@ public class ConnectProvider
         "UploadFile",
         s =>
         {
-            
+            var client = App.GetService<GrpcClientFactory>().CreateClient<Greeter.GreeterClient>("test");
+            var aa = client.UploadFile();
+            var bb =  File.ReadAllBytes(s);
+            bb.Chunk(4096);
+            // 上传所有
             // 去上传！！
             return "ok";
         });
