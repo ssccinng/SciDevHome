@@ -5,6 +5,7 @@ using SciDevHome.Data;
 using SciDevHome.Server;
 using SciDevHome.Utils;
 using Windows.Media.Protection.PlayReady;
+using Microsoft.UI.Xaml.Controls;
 
 namespace SciDevHome.Client.WinUI.ViewModels;
 
@@ -75,25 +76,40 @@ public partial class DirctoryPathViewViewModel : ObservableRecipient
         RefreshFolder(path.Files.Select(s => new Folder { Name = s.Name, IsDirectory = s.IsDirectory }));
     }
     
-    internal async void GetPathFilename(string name)
+    internal async Task<bool> GetPathFilename(string name)
     {
         // 需要完整路径des
-        if (SelectClient == null) return;
+        if (SelectClient == null) return false;
         var path = await _client.GetClientPathAsync(new SciDevHome.Server.GetPathRequest
         {
             // 优化
             ClientId = SelectClient.ClientId, Path = string.Join("/", BaseFolderPath.Skip(1))
         });
+        if (!path.IsSucc)
+        {
+            // ContentDialog dialog = new ContentDialog
+            // {
+            //     Title = "获取路径失败",
+            //     Content = "可能存在权限问题",
+            //     CloseButtonText = "关闭"
+            // };
+            //
+            // ContentDialogResult result = await dialog.ShowAsync();
+            return false;
+        }
+        
+        
         RefreshFolder(path.Files.Select(s => new Folder
         {
             Name = BaseFolderPath.Count == 1 ? s.Name : Path.GetFileName(s.Name),
             IsDirectory = s.IsDirectory
         }).OrderByDescending(s => s.IsDirectory));
+        return true;
     }
 
     public async Task GetFileDetail(string name)
     {
-        _client.DownloadFile(new DownloadFileRequest
+        var downFile = _client.DownloadFile(new DownloadFileRequest
         {
             ClientId = SelectClient.ClientId,
             Path = string.Join("/", BaseFolderPath.Append(name))

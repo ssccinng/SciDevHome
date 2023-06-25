@@ -15,6 +15,32 @@
         <DataTemplate x:Key="DircTemplate"
                       x:DataType="data:Folder">
             <Grid>
+                <Grid.ContextFlyout>
+                    <MenuFlyout>
+                        <MenuFlyoutItem Text="Share">
+                            <MenuFlyoutItem.Icon>
+                                <FontIcon Glyph="&#xE72D;"/>
+                            </MenuFlyoutItem.Icon>
+                            <MenuFlyoutItem.KeyboardAccelerators>
+                                <KeyboardAccelerator Key="S" Modifiers="Control"/>
+                            </MenuFlyoutItem.KeyboardAccelerators>
+                        </MenuFlyoutItem>
+                        <MenuFlyoutItem Text="Copy" Icon="Copy">
+                            <MenuFlyoutItem.KeyboardAccelerators>
+                                <KeyboardAccelerator Key="C" Modifiers="Control"/>
+                            </MenuFlyoutItem.KeyboardAccelerators>
+                        </MenuFlyoutItem>
+                        <MenuFlyoutItem Text="Delete" Icon="Delete">
+                            <MenuFlyoutItem.KeyboardAccelerators>
+                                <KeyboardAccelerator Key="Delete" />
+                            </MenuFlyoutItem.KeyboardAccelerators>
+                        </MenuFlyoutItem>
+                        <MenuFlyoutSeparator/>
+                        <MenuFlyoutItem Text="Rename"/>
+                        <MenuFlyoutItem Text="Select"/>
+                    </MenuFlyout>
+                </Grid.ContextFlyout>
+
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
@@ -54,6 +80,7 @@
                            ItemClicked="ClientFolderPath_OnItemClicked"
                            x:Name="ClientFolderPath"
                            ItemsSource="{x:Bind ViewModel.BaseFolderPath}" />
+            <!-- <Button Click="ButtonBase_OnClick">TEST</Button> -->
         </StackPanel>
 
 
@@ -62,6 +89,7 @@
             ItemsSource="{x:Bind ViewModel.NowFoldList}"
             x:Name="NowFloderView"
             ItemClick="NowFloderView_ItemClick"
+            
             IsItemClickEnabled="True"
             ItemTemplate="{StaticResource DircTemplate}">
 

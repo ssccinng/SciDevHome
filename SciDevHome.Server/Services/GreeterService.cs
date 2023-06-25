@@ -109,10 +109,17 @@ namespace SciDevHome.Server.Services
                     }); // 更加那个啥needwait创建（？
             var res = await _streamGrpcManager.SendConnectStreamAsync(
                 request.ClientId, reqData);
+            var getp = new GetPathResponse { Path = request.Path, IsSucc = true};
+
+            if (res.Data == "null")
+            {
+                getp.IsSucc = false;
+                // 无权限什么的消息，也许需要返回
+                return getp;
+            }
             // todo: 转换是不是太多了（?
             var gg =
-                JsonSerializer.Deserialize<List<GrpcDirctoryInfo>>(res.Data);
-            var getp = new GetPathResponse { Path = request.Path };
+                JsonSerializer.Deserialize<List<GrpcDirctoryInfo>>(res.Data); // 如果是null 则需返回失败
             getp.Files.AddRange(gg.Select(s => new GrpcFileInfo
                 { IsDirectory = s.IsDirectory, Name = s.Path }));
             return getp;
@@ -205,11 +212,12 @@ namespace SciDevHome.Server.Services
         /// <param name="responseStream"></param>
         /// <param name="context"></param>
         /// <returns></returns>
-        public override Task DownloadFile(DownloadFileRequest request,
+        public override async Task DownloadFile(DownloadFileRequest request,
             IServerStreamWriter<DownloadFileResponse> responseStream,
             ServerCallContext context)
         {
-            return base.DownloadFile(request, responseStream, context);
+            // 要check客户端的文件 比如md5这类
+            // await _streamGrpcManager.SendConnectStreamAsync("");
         }
 
         /// <summary>

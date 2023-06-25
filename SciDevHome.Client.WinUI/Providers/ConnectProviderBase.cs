@@ -61,7 +61,7 @@ public class ConnectProvider
                 }
                 catch
                 {
-                    throw;
+                    return null;
                 }
 
                 return new object();

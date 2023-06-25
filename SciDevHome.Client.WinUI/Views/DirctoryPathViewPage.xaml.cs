@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Globalization;
 using Grpc.Net.ClientFactory;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Data;
 using SciDevHome.Client.WinUI.ViewModels;
@@ -55,8 +56,9 @@ public sealed partial class DirctoryPathViewPage : Page
         ViewModel.RefreshClient();
     }
 
-    private void NowFloderView_ItemClick(object sender, ItemClickEventArgs e)
+    private async void NowFloderView_ItemClick(object sender, ItemClickEventArgs e)
     {
+        
         // 最好是双击
         // 若是磁盘 可能需要去除/
         if (e.ClickedItem == null)
@@ -67,7 +69,25 @@ public sealed partial class DirctoryPathViewPage : Page
         if (item.IsDirectory)
         {
             ViewModel.BaseFolderPath.Add(item.Name);
-            ViewModel.GetPathFilename(item.Name);
+            if (await ViewModel.GetPathFilename(item.Name))
+            {
+                
+            }
+            else
+            {
+                ViewModel.BaseFolderPath.RemoveAt(ViewModel.BaseFolderPath.Count - 1);
+                ContentDialog dialog = new ContentDialog
+                {
+                    Title = "获取路径失败",
+                    Content = "可能存在权限问题",
+                    CloseButtonText = "关闭"
+                };
+                dialog.XamlRoot = this.XamlRoot;
+
+
+                ContentDialogResult result = await dialog.ShowAsync();
+            }
+            
 
         }
         else
@@ -89,6 +109,17 @@ public sealed partial class DirctoryPathViewPage : Page
         }
         
         ViewModel.GetPathFilename("");
+    }
+
+    private async void ButtonBase_OnClick(object sender, RoutedEventArgs e)
+    {
+        ContentDialog dialog1 = new ContentDialog
+        {
+            
+        };
+        dialog1.XamlRoot = this.XamlRoot;
+
+        await dialog1.ShowAsync();
     }
 }
 
