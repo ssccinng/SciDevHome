@@ -1,4 +1,5 @@
 using System.Text.Json;
+using Google.Protobuf;
 using Grpc.Net.ClientFactory;
 using SciDevHome.Client.WinUI;
 using SciDevHome.Message;
@@ -87,15 +88,39 @@ public class ConnectProvider
 
     public static ConnectProvider UploadFileProvider = new ConnectProvider(
         "UploadFile",
-        s =>
+          s =>
         {
-            var client = App.GetService<GrpcClientFactory>().CreateClient<Greeter.GreeterClient>("test");
-            var aa = client.UploadFile();
-            var bb =  File.ReadAllBytes(s);
-            bb.Chunk(4096);
+            
+            try
+            {
+                GetPathRequestMessage req = JsonSerializer.Deserialize<GetPathRequestMessage>(s);
+
+                var client = App.GetService<GrpcClientFactory>().CreateClient<Greeter.GreeterClient>("test");
+                var aa = client.UploadFile();
+                 var bb =  File.ReadAllBytes(req.Path);
+                foreach (var datas in bb.Chunk(4096))
+                {
+                     aa.RequestStream.WriteAsync(new UploadFileRequest
+                    {
+                        Data = ByteString.CopyFrom(datas)
+                    }).Wait();
+                }
+                aa.RequestStream.CompleteAsync().Wait();
+
+                var dd = aa.ResponseAsync.Result;
+                return new GetPathResponseMessage{ Path = dd.Path};
+
+            // 优化异步
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+            // aa.res
             // 上传所有
             // 去上传！！
-            return "ok";
         });
 
     public string Command

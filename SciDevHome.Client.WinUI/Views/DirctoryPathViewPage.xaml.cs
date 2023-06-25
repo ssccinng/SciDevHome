@@ -92,7 +92,7 @@ public sealed partial class DirctoryPathViewPage : Page
         }
         else
         {
-            ViewModel.GetFileDetail(item.Name);
+            await ViewModel.GetFileDetail(item.Name);
             // 检查同步
             // 然后尝试打开 
             // 获取文件信息
@@ -100,7 +100,7 @@ public sealed partial class DirctoryPathViewPage : Page
         }
     }
 
-    private void ClientFolderPath_OnItemClicked(BreadcrumbBar sender, BreadcrumbBarItemClickedEventArgs args)
+    private async void ClientFolderPath_OnItemClicked(BreadcrumbBar sender, BreadcrumbBarItemClickedEventArgs args)
     {
         var items = ViewModel.BaseFolderPath;
         for (int i = items.Count - 1; i >= args.Index + 1; i--)
@@ -108,7 +108,7 @@ public sealed partial class DirctoryPathViewPage : Page
             items.RemoveAt(i);
         }
         
-        ViewModel.GetPathFilename("");
+        await ViewModel.GetPathFilename("");
     }
 
     private async void ButtonBase_OnClick(object sender, RoutedEventArgs e)

@@ -5,6 +5,8 @@ using SciDevHome.Data;
 using SciDevHome.Server;
 using SciDevHome.Utils;
 using Windows.Media.Protection.PlayReady;
+using Google.Protobuf;
+using Grpc.Core;
 using Microsoft.UI.Xaml.Controls;
 
 namespace SciDevHome.Client.WinUI.ViewModels;
@@ -112,8 +114,20 @@ public partial class DirctoryPathViewViewModel : ObservableRecipient
         var downFile = _client.DownloadFile(new DownloadFileRequest
         {
             ClientId = SelectClient.ClientId,
-            Path = string.Join("/", BaseFolderPath.Append(name))
+            Path = string.Join("/", BaseFolderPath.Skip(1).Append(name))
         });
+        if (!Directory.Exists($"Temp/{SelectClient.ClientId}"))
+        {
+            Directory.CreateDirectory($"Temp/{SelectClient.ClientId}");
+        }
+        using var aa = File.Create($"Temp/{SelectClient.ClientId}/{name}");
+        long cnt = 0;
+        await foreach (var dd in downFile.ResponseStream.ReadAllAsync())
+        {
+            // dd.Data.WriteTo(aa);
+            await aa.WriteAsync(dd.Data.ToByteArray());
+        }
+        aa.Close();
         // 要完整的namedesuwa
     }
 }

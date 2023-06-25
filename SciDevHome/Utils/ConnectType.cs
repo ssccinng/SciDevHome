@@ -9,4 +9,5 @@ public class ConnectType
     }
 
     public readonly ConnectType GetPathInfoType = new ConnectType("GetPathInfo");
+    
 }

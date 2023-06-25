@@ -8,7 +8,7 @@ using SciDevHome.Server.Mediator.Queries;
 using SciDevHome.Server.Model;
 using System.Collections.Concurrent;
 using System.Text.Json;
-
+using Google.Protobuf;
 using SciDevHome.Server.API;
 
 namespace SciDevHome.Server.Services
@@ -218,6 +218,31 @@ namespace SciDevHome.Server.Services
         {
             // 要check客户端的文件 比如md5这类
             // await _streamGrpcManager.SendConnectStreamAsync("");
+            // 1. 从通知指定客户端上传文件
+            
+            var reqData =
+                await TestAPI.SendRequestAsync(
+                    "UploadFile",
+                    new GetPathRequestMessage
+                    {
+                        Path = request.Path,
+                    }); // 更加那个啥needwait创建（？
+            var res = await _streamGrpcManager.SendConnectStreamAsync(request.ClientId, reqData);
+            // 2. 等待客户端文件上传
+            // 3. 再把获取后的文件返回给客户端
+            // 获取的这个好吗？
+            // todo: 需要剧烈思考
+            var bb = File.ReadAllBytes(JsonSerializer.Deserialize<GetPathResponseMessage>(res.Data).Path);
+            foreach (var datas in bb.Chunk(4096))
+            {
+                var dd = new DownloadFileResponse
+                {
+                    Data = ByteString.CopyFrom(datas)
+                };
+                await responseStream.WriteAsync(dd);
+            }
+            
+            // responseStream
         }
 
         /// <summary>
@@ -230,16 +255,26 @@ namespace SciDevHome.Server.Services
             IAsyncStreamReader<UploadFileRequest> requestStream,
             ServerCallContext context)
         {
-            await foreach (var item in requestStream.ReadAllAsync())
-            {
-                //await _mediator.Send(new UpdateFileCommand(item));
-                //Console.WriteLine(item.FileName);
-                //Console.WriteLine(item.FileSize);
-                //Console.WriteLine(item.FilePath);
-                //Console.WriteLine(item.FileData);
-            }
+            
+            // if (Directory.Exists($"Temp/{requestStream}"))
+            
+            
+             // 1. 创建一个临时文件，用于存储客户端上传的文件数据
+            var tempFilePath = Path.GetTempFileName();
+            using var fileStream = File.Create(tempFilePath);
 
-            throw new NotImplementedException();
+            // 2. 从客户端流中读取文件数据，并将其写入临时文件中
+            await foreach (var request in requestStream.ReadAllAsync())
+            {
+                await fileStream.WriteAsync(request.Data.ToByteArray());
+            }
+            fileStream.Close();
+            // File.Move(tempFilePath, );
+            // 3. 返回一个响应消息，表示文件上传成功
+            return new UploadFileResponse
+            {
+                Path = tempFilePath
+            };
         }
     }
 }
